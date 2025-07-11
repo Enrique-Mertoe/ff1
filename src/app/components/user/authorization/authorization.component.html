@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-card-content>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th *ngFor="let group of groups">{{ group.description }} <a (click)="deleteGroup(group.id)" matTooltip="Delete {{group.name}} role">[X]</a>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let object of sysObjects">
+          <td *ngFor="let group of groups">
+
+            <mat-checkbox *ngFor="let perm of permissions" (change)="updatePermission(object,group,perm,$event.checked)"
+                          [checked]="groupHasPermission(group,object,perm)">
+              {{ object.name }} ({{perm.name}})
+            </mat-checkbox>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

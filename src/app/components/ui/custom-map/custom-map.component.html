@@ -1,0 +1,23 @@
+<div class="container">
+  <div fxLayout="row" fxLayoutAlign="center center" class="map-title">
+    <div class="text-red">
+      {{wraName}}
+    </div>
+    <div matTooltip="Coordinates of your current position">(Your current location {{center}} )</div>
+    <button mat-raised-button (click)="copyCoordinate()" *ngIf="areaMode">
+      <mat-icon aria-hidden="false" iconPositionEnd>location_on</mat-icon>
+      Get My Location
+    </button>
+    <button mat-raised-button (click)="getWRA()" *ngIf="!areaMode" class="text-red">
+      <mat-icon aria-hidden="false" iconPositionEnd>refresh</mat-icon>
+      Reload Water Resource areas
+    </button>
+<!--    <button mat-button style="float: right !important;">Close</button>-->
+  </div>
+  <div class="progress-bar-container">
+    <mat-progress-bar color="accent" mode="indeterminate" *ngIf="showSpinner">
+    </mat-progress-bar>
+    <mat-spinner class="spinner" [diameter]="50" *ngIf="showSpinner"></mat-spinner>
+  </div>
+  <div id="map" class="map"></div>
+</div>

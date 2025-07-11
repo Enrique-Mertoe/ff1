@@ -1,0 +1,237 @@
+<div class="workflow-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="role-info">
+        <div class="role-icon" [style.background-color]="workflowInfo.color">
+          {{ workflowInfo.icon }}
+        </div>
+        <div class="role-details">
+          <h2>{{ workflowInfo.title }}</h2>
+          <p>{{ workflowInfo.description }}</p>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">{{ pendingApplications.length }}</div>
+          <div class="stat-label">Pending Tasks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ applications.length }}</div>
+          <div class="stat-label">Total Applications</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading workflow dashboard...</p>
+  </div>
+
+  <!-- Pending Applications Section -->
+  <div *ngIf="!loading && pendingApplications.length > 0" class="section">
+    <div class="section-header">
+      <h3>⏳ Pending Applications</h3>
+      <span class="section-subtitle">Applications requiring your attention</span>
+    </div>
+    
+    <div class="applications-grid">
+      <div class="application-card priority" *ngFor="let app of pendingApplications">
+        <div class="card-header">
+          <div class="app-id">{{ app.id }}</div>
+          <div class="status-badge" [style.background-color]="getStatusColor(app.status)">
+            {{ getStatusText(app.status) }}
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <div class="app-info">
+            <h4>{{ app.licenseType || 'Surface Water Permit' }}</h4>
+            <p class="applicant">{{ app.applicantName || app.clientName }}</p>
+            <p class="date">Applied: {{ formatDate(app.applicationDate) }}</p>
+          </div>
+          
+          <div class="app-details">
+            <div class="detail-item" *ngIf="app.waterSource">
+              <span class="label">Source:</span>
+              <span class="value">{{ app.waterSource }}</span>
+            </div>
+            <div class="detail-item" *ngIf="app.quantity">
+              <span class="label">Quantity:</span>
+              <span class="value">{{ app.quantity }} m³/day</span>
+            </div>
+            <div class="detail-item" *ngIf="app.location">
+              <span class="label">Location:</span>
+              <span class="value">{{ app.location }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-actions">
+          <button 
+            class="action-btn" 
+            *ngFor="let action of getAvailableActions(app)"
+            [class]="'action-' + action"
+            (click)="openActionDialog(app, action)">
+            {{ getActionIcon(action) }} {{ getActionLabel(action) }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Applications Section -->
+  <div *ngIf="!loading && applications.length > 0" class="section">
+    <div class="section-header">
+      <h3>📋 All Applications</h3>
+      <span class="section-subtitle">Complete list of applications in your workflow</span>
+    </div>
+    
+    <div class="applications-table">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Applicant</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let app of applications">
+            <td>{{ app.id }}</td>
+            <td>{{ app.applicantName || app.clientName }}</td>
+            <td>{{ app.licenseType || 'Surface Water Permit' }}</td>
+            <td>
+              <span class="status-badge" [style.background-color]="getStatusColor(app.status)">
+                {{ getStatusText(app.status) }}
+              </span>
+            </td>
+            <td>{{ formatDate(app.applicationDate) }}</td>
+            <td>
+              <div class="table-actions">
+                <button 
+                  class="action-btn small" 
+                  *ngFor="let action of getAvailableActions(app)"
+                  [class]="'action-' + action"
+                  (click)="openActionDialog(app, action)">
+                  {{ getActionIcon(action) }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- No Applications State -->
+  <div *ngIf="!loading && applications.length === 0" class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>No Applications Found</h3>
+    <p>There are no applications in your current workflow step.</p>
+  </div>
+
+  <!-- Action Dialog -->
+  <div *ngIf="showActionDialog" class="dialog-overlay">
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <h3>{{ getActionIcon(actionType) }} {{ getActionLabel(actionType) }}</h3>
+        <button class="close-btn" (click)="closeActionDialog()">×</button>
+      </div>
+      
+      <div class="dialog-content" *ngIf="selectedApplication">
+        <div class="application-summary">
+          <h4>Application Details</h4>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="label">ID:</span>
+              <span class="value">{{ selectedApplication.id }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Applicant:</span>
+              <span class="value">{{ selectedApplication.applicantName || selectedApplication.clientName }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Type:</span>
+              <span class="value">{{ selectedApplication.licenseType || 'Surface Water Permit' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Status:</span>
+              <span class="value status-badge" [style.background-color]="getStatusColor(selectedApplication.status)">
+                {{ getStatusText(selectedApplication.status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action-specific forms -->
+        <div class="action-form">
+          
+          <!-- Field Assessment Upload -->
+          <div *ngIf="actionType === 'upload_field_results'" class="form-section">
+            <h4>Upload Field Assessment Results</h4>
+            <div class="file-upload">
+              <input type="file" #fileInput (change)="onFilesSelected($event)" 
+                     accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple hidden>
+              <div class="file-upload-area" (click)="fileInput.click()">
+                <div class="upload-icon">📁</div>
+                <p>Click to select field assessment files</p>
+                <small>Supported: PDF, Images, Documents</small>
+              </div>
+              <div *ngIf="selectedFilesArray && selectedFilesArray.length > 0" class="selected-files">
+                <div *ngFor="let file of selectedFilesArray; let i = index" class="file-item">
+                  📄 {{ file.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rental Calculation -->
+          <div *ngIf="actionType === 'calculate_rentals'" class="form-section">
+            <h4>Calculate Annual Rentals</h4>
+            <div class="rental-form">
+              <div class="form-group">
+                <label>Water Quantity (m³/day)</label>
+                <input type="number" [(ngModel)]="rentalCalculation.quantity" 
+                       (input)="calculateRental()" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Rate (MWK per m³)</label>
+                <input type="number" [(ngModel)]="rentalCalculation.rate" 
+                       (input)="calculateRental()" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Annual Rental (MWK)</label>
+                <input type="number" [value]="rentalCalculation.annualRental" 
+                       readonly class="form-control readonly">
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes Section -->
+          <div class="form-section">
+            <h4>{{ actionType === 'reject' ? 'Rejection Reason' : 'Notes' }} 
+                <span *ngIf="actionType === 'reject'" class="required">*</span>
+            </h4>
+            <textarea [(ngModel)]="actionNotes" 
+                      [placeholder]="actionType === 'reject' ? 'Please provide reason for rejection...' : 'Add notes about this action...'"
+                      rows="4" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="secondary-btn" (click)="closeActionDialog()">Cancel</button>
+        <button class="primary-btn" (click)="executeAction()" 
+                [disabled]="actionType === 'reject' && !actionNotes.trim()">
+          {{ getActionIcon(actionType) }} {{ getActionLabel(actionType) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

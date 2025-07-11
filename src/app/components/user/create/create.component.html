@@ -1,0 +1,93 @@
+<form [formGroup]="userForm">
+  <mat-card>
+    <mat-card-content>
+      <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px">
+        <mat-form-field fxFlex="40%" fxFlex.lt-sm="100%">
+          <mat-label>{{ "Salutation" }}</mat-label>
+          <mat-select formControlName="sysSalutation" [compareWith]="compareFunction">
+            <mat-option *ngFor="let s of salutations;" [value]="s">{{s.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field fxFlex="40%" fxFlex.lt-sm="100%">
+          <mat-label>{{ "First name" }}</mat-label>
+          <input matInput type="text" placeholder="First name" formControlName="firstName">
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxFlexFill fxLayout.lt-sm="column" fxLayoutGap="16px">
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Last name" }}</mat-label>
+          <input matInput type="text" placeholder="Last name" formControlName="lastName">
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>{{ "E-mail" }}</mat-label>
+          <input matInput type="text" placeholder="User E-mail address" formControlName="emailAddress">
+          <mat-error *ngIf="form['emailAddress'].dirty && form['emailAddress'].invalid" class="alert alert-danger alert-dismissible">
+            <mat-error *ngIf="form['emailAddress'].errors['required']">Email is required.</mat-error>
+            <mat-error *ngIf="form['emailAddress'].errors['pattern']">Please, Enter a valid email.</mat-error>
+            <mat-error *ngIf="form['emailAddress'].errors['emailExists']">{{form['emailAddress'].errors['emailExists']}}</mat-error>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Account status" }}</mat-label>
+          <mat-select formControlName="sysAccountStatus" [compareWith]="compareFunction">
+            <mat-option *ngFor="let s of sysAccountStatuses;" [value]="s">{{s.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px">
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Phone number" }}</mat-label>
+          <input matInput type="text" placeholder="User phone number" formControlName="phoneNumber">
+          <mat-error *ngIf="form['phoneNumber'].dirty && form['phoneNumber'].invalid" class="alert alert-danger alert-dismissible">
+            <mat-error *ngIf="form['phoneNumber'].errors['required']">Phone Number is required.</mat-error>
+            <mat-error *ngIf="form['phoneNumber'].errors['pattern']">Please, Enter 10 digit Phone Number.</mat-error>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>{{ "User group" }} *</mat-label>
+          <mat-select formControlName="sysUserGroup" [compareWith]="compareFunction">
+            <mat-option *ngFor="let u of userGroups;" [value]="u">{{u.name}}({{u.description}})</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxFlexFill fxLayout.lt-sm="column" fxLayoutGap="16px">
+        <mat-form-field fxFlex="40%" fxFlex.lt-sm="100%">
+          <mat-label>{{ "Username" }}</mat-label>
+          <input matInput placeholder="username" formControlName="username">
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxFlexFill fxLayout.lt-sm="column" fxLayoutGap="16px">
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Password" }}</mat-label>
+          <input matInput placeholder="Password" formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="new-password">
+          <mat-icon matSuffix (click)="hidePassword = !hidePassword">
+            {{hidePassword ? 'visibility' : 'visibility_off'}}
+          </mat-icon>
+          <mat-error *ngIf="form['password'].hasError('required')">
+            Please enter a your password
+          </mat-error>
+          <mat-error *ngIf="form['password'].getError('passwordStrength') as error">
+            {{error}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Confirm password" }}</mat-label>
+          <input matInput placeholder="Confirm password" formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'"
+                 autocomplete="new-password">
+          <mat-icon matSuffix (click)="hideConfirmPassword = !hideConfirmPassword">
+            {{hideConfirmPassword ? 'visibility' : 'visibility_off'}}
+          </mat-icon>
+          <mat-error *ngIf="form['confirmPassword'].hasError('required')">
+            Please confirm your new password
+          </mat-error>
+          <mat-error *ngIf="form['confirmPassword'].getError('mustMatch') as error">
+            {{error}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button  color="primary" (click)="save()" [disabled]="userForm.invalid">Save</button>
+    </mat-card-actions>
+  </mat-card>
+</form>

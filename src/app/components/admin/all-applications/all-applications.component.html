@@ -1,0 +1,185 @@
+<div class="all-applications-container">
+  <div class="header">
+    <h2>All Applications</h2>
+    <p>Manage all water permit applications</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Payment Status:</label>
+      <select [(ngModel)]="selectedPaymentStatus" (change)="applyFilters()">
+        <option value="">All Payment Status</option>
+        <option value="pending">Pending</option>
+        <option value="paid">Paid</option>
+        <option value="completed">Completed</option>
+        <option value="failed">Failed</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>License Type:</label>
+      <select [(ngModel)]="selectedLicenseType" (change)="applyFilters()">
+        <option value="">All License Types</option>
+        <option *ngFor="let type of licenseTypes" [value]="type.name">
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+
+    <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p>Loading applications...</p>
+  </div>
+
+  <!-- Applications Table -->
+  <div *ngIf="!loading && filteredApplications.length > 0" class="applications-table">
+    <table class="applications-table-content">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Applicant</th>
+          <th>Email</th>
+          <th>License Type</th>
+          <th>Status</th>
+          <th>Amount</th>
+          <th>Payment Status</th>
+          <th>Submitted</th>
+          <th class="actions-cell">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let app of filteredApplications; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ app.applicantName }}</td>
+          <td>{{ app.applicantEmail }}</td>
+          <td>{{ app.licenseType }}</td>
+          <td>
+            <span class="status-badge" [style.background-color]="getStatusColor(app.status)">
+              {{ app.status }}
+            </span>
+          </td>
+          <td class="amount-cell">
+            <strong>{{ formatCurrency(app.paymentStatus?.amount || app.applicationFees || 20000) }}</strong>
+          </td>
+          <td>
+            <span class="payment-badge" [style.color]="getPaymentStatusColor(app.paymentStatus?.status)">
+              {{ app.paymentStatus?.status || 'PENDING' }}
+            </span>
+          </td>
+          <td>{{ formatDate(app.applicationDate) }}</td>
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button class="action-btn view-btn" (click)="viewApplication(app)" title="View Details">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+              <button class="action-btn payment-btn" (click)="viewPaymentReceipts(app)" 
+                      *ngIf="app.paymentStatus?.status === 'AWAITING_APPROVAL'" 
+                      title="View Payment Receipts">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14,2 14,8 20,8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10,9 9,9 8,9"></polyline>
+                </svg>
+              </button>
+              <button class="action-btn" (click)="emailApplicant(app)" title="Email Applicant">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Applications -->
+  <div *ngIf="!loading && filteredApplications.length === 0" class="no-applications">
+    <h3>No Applications Found</h3>
+    <p>No applications match the selected filters.</p>
+  </div>
+
+  <!-- Summary -->
+  <div *ngIf="!loading" class="summary-section">
+    <div class="summary-card">
+      <h4>Summary</h4>
+      <p>Total Applications: <strong>{{ applications.length }}</strong></p>
+      <p>Filtered Results: <strong>{{ filteredApplications.length }}</strong></p>
+    </div>
+  </div>
+
+  <!-- Payment Receipts Dialog -->
+  <div *ngIf="showPaymentReceiptsDialog" class="dialog-overlay">
+    <div class="dialog-container large">
+      <div class="dialog-header">
+        <h3>Payment Receipts - {{ selectedApplication?.applicantName }}</h3>
+        <button class="close-btn" (click)="closePaymentReceiptsDialog()">×</button>
+      </div>
+      
+      <div class="dialog-content" *ngIf="selectedApplication">
+        <div class="payment-info">
+          <div class="info-row">
+            <span class="label">Application ID:</span>
+            <span class="value">{{ selectedApplication.id }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">License Type:</span>
+            <span class="value">{{ selectedApplication.licenseType }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Amount:</span>
+            <span class="value">{{ formatCurrency(selectedApplication.paymentStatus?.amount) }}</span>
+          </div>
+        </div>
+        
+        <div class="receipts-section">
+          <h4>Uploaded Payment Receipts</h4>
+          <div *ngIf="loadingReceipts" class="loading-receipts">
+            <p>Loading payment receipts...</p>
+          </div>
+          
+          <div *ngIf="!loadingReceipts && paymentReceipts.length > 0" class="receipts-list">
+            <div *ngFor="let receipt of paymentReceipts" class="receipt-item">
+              <div class="receipt-info">
+                <span class="receipt-date">{{ formatDate(receipt.uploadedAt) }}</span>
+                <span class="receipt-category">{{ receipt.category }}</span>
+              </div>
+              <div class="receipt-actions">
+                <button class="view-btn" (click)="viewReceiptDocument(receipt.documentId)">
+                  📄 View Receipt
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="!loadingReceipts && paymentReceipts.length === 0" class="no-receipts">
+            <p>No payment receipts found for this application.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="secondary-btn" (click)="closePaymentReceiptsDialog()">Close</button>
+        <button class="approve-btn" (click)="approvePayment(selectedApplication)" 
+                *ngIf="paymentReceipts.length > 0">
+          ✅ Approve Payment
+        </button>
+        <button class="reject-btn" (click)="rejectPayment(selectedApplication)" 
+                *ngIf="paymentReceipts.length > 0">
+          ❌ Reject Payment
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

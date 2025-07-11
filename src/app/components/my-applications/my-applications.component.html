@@ -1,0 +1,301 @@
+<div class="my-applications-container">
+  <div class="header">
+    <h2>My Applications</h2>
+    <p>View and manage your water permit applications</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <p>Loading your applications...</p>
+  </div>
+
+  <!-- Applications Table -->
+  <div *ngIf="!loading && applications.length > 0" class="applications-table">
+    <table class="applications-table-content">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Applicant</th>
+          <th>License Type</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Amount</th>
+          <th>Payment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let app of applications; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ app.applicantName || app.clientName }}</td>
+          <td>{{ app.licenseType || 'Water Permit' }}</td>
+          <td>
+            <span class="status-badge" [style.background-color]="getStatusColor(app.status)">
+              {{ getStatusText(app.status) }}
+            </span>
+          </td>
+          <td>{{ formatDate(app.applicationDate) }}</td>
+          <td class="amount-cell">
+            <strong>{{ formatCurrency(app.paymentStatus?.amount || app.applicationFees || 5000) }}</strong>
+          </td>
+          <td>
+            <span class="payment-badge" [style.color]="getPaymentStatusColor(app.paymentStatus?.status)">
+              {{ getPaymentStatusText(app.paymentStatus?.status) }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <div class="dropdown-container">
+              <button class="dropdown-trigger" (click)="toggleDropdown(i)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+              </button>
+              <div class="dropdown-menu" [class.show]="activeDropdown === i">
+                <button class="dropdown-item" (click)="viewApplication(app); closeDropdown()">
+                  👁️ View Details
+                </button>
+                <button class="dropdown-item" (click)="previewInvoice(app); closeDropdown()">
+                  📄 Preview Invoice
+                </button>
+                <button class="dropdown-item" (click)="payNow(app); closeDropdown()" 
+                        *ngIf="app.paymentStatus?.status === 'PENDING'">
+                  💳 Make Payment
+                </button>
+                <button class="dropdown-item" (click)="uploadReceipt(app); closeDropdown()" 
+                        *ngIf="app.paymentStatus?.status === 'PENDING'">
+                  📎 Upload Receipt
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Applications -->
+  <div *ngIf="!loading && applications.length === 0" class="no-applications">
+    <h3>No Applications Found</h3>
+    <p>You haven't submitted any water permit applications yet.</p>
+    <button routerLink="/home">
+      Apply for Water Permit
+    </button>
+  </div>
+
+  <!-- Payment Dialog -->
+  <div *ngIf="showPaymentDialog" class="payment-dialog-overlay" style="z-index: 1050;">
+    <div class="payment-dialog">
+      <div class="dialog-header">
+        <h3>Payment Details</h3>
+        <button class="close-btn" (click)="closePaymentDialog()">×</button>
+      </div>
+      
+      <div class="dialog-content" *ngIf="selectedApplication">
+        <div class="payment-info-section">
+          <div class="secure-payment-notice">
+            <h4>🔒 Secure Payment</h4>
+            <p>You will be redirected to BOMAPay's secure payment page to complete your payment safely.</p>
+          </div>
+          
+          <div class="payment-details">
+            <div class="detail-row">
+              <span class="label">Application:</span>
+              <span class="value">{{ selectedApplication.licenseType }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Amount:</span>
+              <span class="value">{{ formatCurrency(selectedApplication.paymentStatus?.amount || 5000) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Reference:</span>
+              <span class="value">{{ selectedApplication.id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="cancel-btn" (click)="closePaymentDialog()">Cancel</button>
+        <button class="proceed-btn" (click)="initiateSecurePayment()">
+          Continue to Secure Payment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Details Dialog -->
+  <div *ngIf="showDetailsDialog" class="dialog-overlay">
+    <div class="dialog-container large">
+      <div class="dialog-header">
+        <h3>Application Details</h3>
+        <button class="close-btn" (click)="closeApplicationDetails()">×</button>
+      </div>
+      
+      <div class="dialog-content" *ngIf="selectedApplication">
+        <div class="details-grid">
+          <div class="detail-section">
+            <h4>Basic Information</h4>
+            <div class="detail-row">
+              <span class="label">Application ID:</span>
+              <span class="value">{{ selectedApplication.id }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Applicant:</span>
+              <span class="value">{{ selectedApplication.applicantName || selectedApplication.clientName }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">License Type:</span>
+              <span class="value">{{ selectedApplication.licenseType || 'Surface Water Permit' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <span class="value status-badge" [style.background-color]="getStatusColor(selectedApplication.status)">
+                {{ getStatusText(selectedApplication.status) }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Application Date:</span>
+              <span class="value">{{ formatDate(selectedApplication.applicationDate) }}</span>
+            </div>
+          </div>
+          
+          <div class="detail-section">
+            <h4>Water Source Details</h4>
+            <div class="detail-row">
+              <span class="label">Water Source:</span>
+              <span class="value">{{ selectedApplication.waterSource || 'Not specified' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Water Use:</span>
+              <span class="value">{{ selectedApplication.waterUse || 'Not specified' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Quantity (m³/day):</span>
+              <span class="value">{{ selectedApplication.quantity || 'Not specified' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Location:</span>
+              <span class="value">{{ selectedApplication.location || 'Not specified' }}</span>
+            </div>
+          </div>
+          
+          <div class="detail-section">
+            <h4>Payment Information</h4>
+            <div class="detail-row">
+              <span class="label">Amount Due:</span>
+              <span class="value">{{ formatCurrency(selectedApplication.paymentStatus?.amount || selectedApplication.applicationFees || 5000) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Payment Status:</span>
+              <span class="value payment-badge" [style.color]="getPaymentStatusColor(selectedApplication.paymentStatus?.status)">
+                {{ getPaymentStatusText(selectedApplication.paymentStatus?.status) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="detail-section" *ngIf="selectedApplication.comments">
+            <h4>Comments</h4>
+            <div class="comments-section">
+              <p>{{ selectedApplication.comments }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="primary-btn" (click)="closeApplicationDetails()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoice Preview Dialog -->
+  <div *ngIf="showInvoicePreview" class="dialog-overlay">
+    <div class="dialog-container large">
+      <div class="dialog-header">
+        <h3>Invoice Preview</h3>
+        <button class="close-btn" (click)="closeInvoicePreview()">×</button>
+      </div>
+      
+      <div class="dialog-content">
+        <div class="invoice-preview">
+          <iframe [src]="invoicePreviewUrl" width="100%" height="600px" frameborder="0">
+            <p>Your browser does not support iframes. <a [href]="invoicePreviewUrl" target="_blank">Download the invoice</a> instead.</p>
+          </iframe>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="secondary-btn" (click)="closeInvoicePreview()">Close</button>
+        <button class="primary-btn" (click)="downloadInvoice(selectedApplication)">Download Invoice</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Upload Dialog -->
+  <div *ngIf="showReceiptUpload" class="dialog-overlay">
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <h3>Upload Payment Receipt</h3>
+        <button class="close-btn" (click)="closeReceiptUpload()">×</button>
+      </div>
+      
+      <div class="dialog-content" *ngIf="selectedApplication">
+        <div class="upload-info">
+          <h4>Payment Details</h4>
+          <div class="detail-row">
+            <span class="label">Application:</span>
+            <span class="value">{{ selectedApplication.licenseType || 'Surface Water Permit' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Amount:</span>
+            <span class="value">{{ formatCurrency(selectedApplication.paymentStatus?.amount || selectedApplication.applicationFees || 5000) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Reference:</span>
+            <span class="value">{{ selectedApplication.id }}</span>
+          </div>
+        </div>
+        
+        <div class="upload-section">
+          <h4>Payment Method</h4>
+          <div class="payment-methods">
+            <div class="method-option" *ngFor="let method of paymentMethods" 
+                 [class.selected]="selectedPaymentMethod === method.id"
+                 (click)="selectedPaymentMethod = method.id">
+              <span class="method-icon">{{ method.icon }}</span>
+              <span class="method-name">{{ method.name }}</span>
+            </div>
+          </div>
+          
+          <div class="file-upload-section">
+            <h4>Upload Receipt/Proof of Payment</h4>
+            <input type="file" #fileInput (change)="onFileSelected($event)" 
+                   accept=".jpg,.jpeg,.png,.pdf" hidden>
+            <div class="file-upload-area" (click)="fileInput.click()">
+              <div class="upload-icon">📁</div>
+              <p *ngIf="!selectedFile">Click to select receipt file</p>
+              <p *ngIf="selectedFile" class="selected-file">{{ selectedFile.name }}</p>
+              <small>Supported formats: JPG, PNG, PDF (Max 5MB)</small>
+            </div>
+          </div>
+          
+          <div class="notes-section">
+            <h4>Additional Notes (Optional)</h4>
+            <textarea [(ngModel)]="uploadNotes" placeholder="Add any additional information about the payment..." 
+                      rows="3" class="notes-textarea"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="secondary-btn" (click)="closeReceiptUpload()">Cancel</button>
+        <button class="primary-btn" (click)="submitReceiptUpload()" 
+                [disabled]="!selectedFile || !selectedPaymentMethod">
+          Upload Receipt
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

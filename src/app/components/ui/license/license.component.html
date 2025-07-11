@@ -1,0 +1,82 @@
+<div class="permit-container">
+  <div id="permit-content" class="permit-content">
+    <!-- QR Code -->
+    <div class="qr-code-container">
+      <qrcode [qrdata]="qrData"
+              [width]="100"
+              [errorCorrectionLevel]="'M'"
+              [colorDark]="'#000000'"
+              [margin]="1"></qrcode>
+      <p class="qr-label">OFFICIAL PERMIT</p>
+    </div>
+
+    <!-- Header with Logo Placeholder -->
+    <div class="header">
+      <div class="logo-placeholder">
+        <img src="logo_docs.png" alt="NWRA Logo" class="logo">
+        <div class="logo-text">NWRA OFFICIAL SEAL</div>
+      </div>
+      <div class="header-text">
+        <h1>SIXTH SCHEDULE</h1>
+        <h2>WATER RESOURCES ACT (CAP.72:03)</h2>
+        <h3>WATER RESOURCES REGULATIONS, 2018</h3>
+        <h4>FORM C3 - BOREHOLE DRILLING PERMIT</h4>
+      </div>
+    </div>
+
+    <!-- Permit Details -->
+    <div class="permit-details">
+      <p><strong>Permit Number:</strong> {{permitData.permitNumber}}</p>
+      <p><strong>Name and address of Permit Holder:</strong></p>
+      <p class="indent">{{permitData.companyName}}, {{permitData.companyAddress}}</p>
+
+      <p class="authorization">
+        You are authorized to operate the business of drilling boreholes in Malawi.
+      </p>
+
+      <p>
+        This permit shall be valid for <strong>one year</strong> from
+        {{permitData.issueDate}} to {{permitData.expiryDate}}
+      </p>
+    </div>
+
+    <!-- Conditions List -->
+    <div class="conditions">
+      <p>This permit is subject to the following conditions:</p>
+      <ol>
+        <li *ngFor="let condition of conditions">{{condition}}</li>
+      </ol>
+    </div>
+
+    <!-- Signature Section -->
+    <div class="signature-section">
+      <table>
+        <tr>
+          <td width="60%">
+            <p><strong>Date: {{permitData.issueDate}}</strong></p>
+            <p><strong>Name: {{permitData.directorName}}</strong></p>
+            <p><strong>Signature:</strong> _________________________</p>
+          </td>
+          <td width="40%" class="stamp-cell">
+            <div class="stamp-placeholder">OFFICIAL STAMP</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>
+        The Executive Director, National Water Resources Authority,<br>
+        Private Bag 363, Lilongwe 3
+      </p>
+      <p>
+        Telephone: {{permitData.contactPhone}} | Email: {{permitData.contactEmail}}
+      </p>
+    </div>
+  </div>
+
+  <button (click)="generatePDF()">
+    <i class="fas fa-download"></i> DOWNLOAD PERMIT
+  </button>
+</div>

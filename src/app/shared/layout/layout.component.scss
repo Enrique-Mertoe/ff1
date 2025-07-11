@@ -1,0 +1,139 @@
+.navbar-spacer {
+  flex: 1 1 auto;
+}
+
+.navbar {
+  z-index: 2;
+}
+
+.navbar-brand {
+  text-decoration: none;
+  color: white;
+}
+
+.navbar-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.navbar-is-mobile .navbar {
+  position: fixed;
+  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+  z-index: 2;
+}
+
+.navbar-sidenav-container {
+  /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+           causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
+  flex: 1;
+}
+
+.navbar-is-mobile .navbar-sidenav-container {
+  /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
+           `<body>` to be our scrolling element for mobile layouts. */
+  flex: 1 0 auto;
+}
+
+/*Set sidenav width*/
+
+.mat-sidenav {
+  min-width: 180px !important;
+  border-right: 1px solid #eee;
+  box-shadow: 6px 0 6px rgba(0, 0, 0, .1);
+  /* background-color:rgb(63, 81, 181); */
+}
+
+/* Set height of wrapper to stop content from moving up & down */
+
+.progress-bar-container {
+  height: 5px;
+}
+
+a.mat-mdc-list-item.active {
+  background: rgba(0, 0, 0, .04);
+}
+
+#push-bottom {
+  position: absolute;
+  bottom: 0;
+}
+.mat-drawer {
+  width: auto;
+
+  //box-shadow: var(--mat-sidenav-container-elevation-shadow);
+  //background-color: var(--mat-sidenav-container-background-color, var(--mat-app-surface));
+  /* border-top-right-radius: var(--mat-sidenav-container-shape, var(--mat-app-corner-large)); */
+  /* border-bottom-right-radius: var(--mat-sidenav-container-shape, var(--mat-app-corner-large)); */
+  border-top-right-radius: unset;
+  border-bottom-right-radius: unset;
+
+}
+.main-content {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  //width: 240px;
+  //padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+mat-sidenav-content {
+  padding-right: 16px;
+}
+
+.sidenav-scroll-wrapper {
+  height: calc(100dvh - 64px - 16px);
+  overflow: auto;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.sidenav-content {
+  max-height: 100%;
+  overflow-y: auto;
+  margin-top: -15px;
+  padding: 0 16px 16px;
+  box-sizing: border-box;
+  @media (pointer: fine) {
+    &::-webkit-scrollbar {
+      background-color: transparent;
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+    }
+  }
+}
+
+@media (max-width: 959.98px) {
+  mat-sidenav-content {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+  .sidenav-scroll-wrapper {
+    height: calc(100dvh - 64px);
+  }
+  .sidenav-content {
+    overflow-y: visible;
+    padding: 8px;
+  }
+}

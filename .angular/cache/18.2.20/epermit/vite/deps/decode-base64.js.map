@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../node_modules/decode-base64/dist/browser.js"],
+  "sourcesContent": ["/* MAIN */\nconst decode = base64 => {\n  const binary = atob(base64);\n  const u8 = new Uint8Array(binary.length);\n  for (let i = 0, l = binary.length; i < l; i++) {\n    u8[i] = binary.charCodeAt(i);\n  }\n  return u8;\n};\n/* EXPORT */\nexport default decode;"],
+  "mappings": ";;;AACA,IAAM,SAAS,YAAU;AACvB,QAAM,SAAS,KAAK,MAAM;AAC1B,QAAM,KAAK,IAAI,WAAW,OAAO,MAAM;AACvC,WAAS,IAAI,GAAG,IAAI,OAAO,QAAQ,IAAI,GAAG,KAAK;AAC7C,OAAG,CAAC,IAAI,OAAO,WAAW,CAAC;AAAA,EAC7B;AACA,SAAO;AACT;AAEA,IAAO,kBAAQ;",
+  "names": []
+}

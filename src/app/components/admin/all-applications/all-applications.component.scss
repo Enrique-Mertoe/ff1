@@ -1,0 +1,515 @@
+.all-applications-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.header h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #666;
+  font-size: 16px;
+}
+
+.filters-section {
+  display: flex;
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.filter-group select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.clear-filters-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  height: fit-content;
+}
+
+.clear-filters-btn:hover {
+  background: #5a6268;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+}
+
+.applications-table {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow-x: auto;
+  margin-bottom: 30px;
+}
+
+.applications-table-content {
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+}
+
+.applications-table-content th {
+  background-color: #f8f9fa;
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 14px;
+}
+
+.applications-table-content td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.applications-table-content tr:hover {
+  background-color: #f8f9fa;
+}
+
+.app-id {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #666;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.payment-badge {
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.amount-cell {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.actions-cell {
+  text-align: center;
+  white-space: nowrap;
+  position: sticky;
+  right: 0;
+  background: #fff;
+}
+.actions-cell::before{
+  position: absolute;
+  border-left: 1px solid rgba(0,0,0,0.1);
+  inset: 0;
+  content: "";
+  z-index: -1;
+}
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.action-btn:first-child:hover {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.action-btn:last-child:hover {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.view-btn:hover {
+  border-color: #28a745 !important;
+  color: #28a745 !important;
+}
+
+.no-applications {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-applications h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.summary-section {
+  display: flex;
+  justify-content: center;
+}
+
+.summary-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  min-width: 250px;
+}
+
+.summary-card h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.summary-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+// Payment Receipts Dialog
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-container {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-container.large {
+  max-width: 800px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.dialog-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.dialog-content {
+  padding: 20px;
+}
+
+.payment-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: 500;
+  color: #333;
+}
+
+.value {
+  color: #666;
+}
+
+.receipts-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.loading-receipts {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.receipts-list {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.receipt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.receipt-item:last-child {
+  border-bottom: none;
+}
+
+.receipt-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.receipt-date {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.receipt-category {
+  font-size: 12px;
+  color: #666;
+}
+
+.receipt-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.view-btn:hover {
+  background: #0056b3;
+}
+
+.no-receipts {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+.secondary-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: #5a6268;
+}
+
+.approve-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approve-btn:hover {
+  background: #218838;
+}
+
+.reject-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reject-btn:hover {
+  background: #c82333;
+}
+
+.payment-btn {
+  background-color: #ff9800 !important;
+  color: white !important;
+  border-color: #ff9800 !important;
+}
+
+.payment-btn:hover {
+  background-color: #f57c00 !important;
+  border-color: #f57c00 !important;
+}
+
+// Global dialog styles for Angular Material
+::ng-deep .application-details-dialog-container {
+  .mat-mdc-dialog-surface {
+    border-radius: 8px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .applications-table-content {
+    font-size: 12px;
+  }
+  
+  .applications-table-content th,
+  .applications-table-content td {
+    padding: 8px 6px;
+  }
+  
+  .dialog-container {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .receipt-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .application-details-dialog {
+    width: 98vw;
+    max-height: 95vh;
+  }
+  
+  .application-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dialog-body {
+    flex-direction: column;
+  }
+  
+  .main-content.collapsed {
+    flex: 1;
+  }
+  
+  .side-panel {
+    width: 100%;
+    max-height: 50vh;
+  }
+  
+  @keyframes slideIn {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: auto;
+      opacity: 1;
+    }
+  }
+}

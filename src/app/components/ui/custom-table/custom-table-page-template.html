@@ -1,0 +1,18 @@
+<app-custom-table
+  [tableData]="data"
+  [totalRows]="totalRows"
+  [tableColumns]="cols"
+  [canAdd]="canAdd"
+  [canEdit]="canEdit"
+  [canDelete]="canDelete"
+  [canDownload]="canDownload"
+  [isFilterable]="isFilterable"
+  [isPageable]="isPageable"
+  [defaultPageSize]="pageSize || initPageSize"
+
+  (matPageChange)="pageChanged($event)"
+  (rowAction)="action($event)"
+  (onSearch)="filterData($event)"
+  (sort)="sortData($event)"
+>
+</app-custom-table>

@@ -1,0 +1,116 @@
+// don't forget to add the global styles that are in styles.css
+.mat-icon {
+  vertical-align: middle;
+}
+.sidenav {
+  width: 250px;
+  //width: 260px;
+}
+
+.sidenav-fixed {
+  height: 90vh;
+  position: fixed;
+  top: 64px !important;
+  overflow: auto;
+}
+//.sidenav {
+//  width: 250px;
+//  position: fixed;
+//  top: 64px !important;
+//  .mat-drawer-inner-container {
+//    top: 64px;
+//  }
+//}
+//
+//.mat-drawer-container {
+//  position: fixed;
+//  top: 64px !important;
+//}
+
+.side-navbar {
+  //min-width: 70px;
+  .active-link {
+    background-color: #fafafa;
+    //border-left: solid 3px #1976d2;
+    border-left: solid 3px #ffd740;
+  }
+
+  .hover {
+    transition-duration: 400ms;
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition-property: transform, border, background-color;
+  }
+
+  .mat-mdc-list-item,
+  a {
+    border: none;
+    box-sizing: border-box;
+    text-decoration: none;
+    &:hover {
+      cursor: pointer;
+      background-color: #fafafa;
+      border-left: solid 3px #1976d2;
+    }
+  }
+  mat-icon {
+    color: #1976d2;
+  }
+}
+
+.mat-line {
+  padding-right: 0;
+  padding-left: 16px;
+}
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+.mat-mdc-subheader {
+  margin: 16px !important;
+}
+.mat-expansion-panel-header {
+  padding: 0 16px !important;
+}
+
+.mat-mdc-nav-list .mat-icon {
+  margin-right: 10px;
+}
+
+.mat-expansion-panel-body {
+  padding: 0 !important
+}
+
+.mat-expansion-panel-header {
+  height: 48px !important;
+}
+
+.mat-expansion-panel .mat-mdc-list-item {
+  padding-left: 15px !important;
+}
+
+.mat-mdc-nav-list .is-active {
+  /*background-color: rgb(204, 204, 204)!important;*/
+  /*border-left     : 8px solid rgb(139, 137, 133);*/
+  /*width           : calc(100% - 8px)!important;*/
+
+
+  //background: rgba(0, 0, 0, .04);
+  background-color: #fafafa;
+  //border-left: solid 3px #1976d2;
+  border-left: solid 3px #ffd740;
+}
+
+
+
+.mat-mdc-list-base {
+  padding-top: 0 !important;
+}
+
+.mat-mdc-nav-list .mat-mdc-list-item.is-active .mdc-list-item-content {
+  padding: 0 8px;
+}

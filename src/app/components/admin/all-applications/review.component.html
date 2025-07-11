@@ -1,0 +1,158 @@
+<div class="">
+    <div class="review-mode" *ngIf="selectedAction !== 'review_application' && showReviewMode">
+        <div class="review-header">
+            <h5>🔍 Application Review Analysis</h5>
+            <button class="close-review-btn" (click)="closeReviewMode()" title="Close Review">×</button>
+        </div>
+
+        <div class="loading-review" *ngIf="loadingReview">
+            <div class="loading-spinner"></div>
+            <span>Loading application details...</span>
+        </div>
+
+        <div class="review-content" *ngIf="!loadingReview && applicationReviewData">
+            <!-- Validation Summary -->
+            <div class="validation-summary">
+                <div class="summary-stats">
+                    <span class="stat-item valid">✅ {{ getValidationSummary().valid }} Valid</span>
+                    <span class="stat-item invalid">❌ {{ getValidationSummary().invalid }} Issues</span>
+                    <span class="stat-percentage" [ngClass]="{
+                                        'high-score': getValidationSummary().percentage >= 80,
+                                        'medium-score': getValidationSummary().percentage >= 60 && getValidationSummary().percentage < 80,
+                                        'low-score': getValidationSummary().percentage < 60
+                                    }">{{ getValidationSummary().percentage }}% Complete</span>
+                </div>
+            </div>
+
+            <!-- Field Validation Results -->
+            <div class="field-validation-grid">
+                <!-- Applicant Information -->
+                <div class="validation-section">
+                    <h6>👤 Applicant Information</h6>
+                    <div class="field-validation" *ngFor="let field of [
+                                        {key: 'applicantName', label: 'Full Name'},
+                                        {key: 'applicantEmail', label: 'Email Address'},
+                                        {key: 'applicantPhone', label: 'Phone Number'},
+                                        {key: 'physicalAddress', label: 'Physical Address'}
+                                    ]">
+                        <div class="field-row">
+                            <span class="field-icon">{{ fieldValidationResults[field.key]?.icon }}</span>
+                            <span class="field-label">{{ field.label }}:</span>
+                            <span class="field-status"
+                                  [ngClass]="fieldValidationResults[field.key]?.valid ? 'valid' : 'invalid'">
+                                                {{ fieldValidationResults[field.key]?.message }}
+                                            </span>
+                        </div>
+                        <div class="field-value">{{ fieldValidationResults[field.key]?.value }}</div>
+                    </div>
+                </div>
+
+                <!-- Water Source Details -->
+                <div class="validation-section">
+                    <h6>💧 Water Source Details</h6>
+                    <div class="field-validation" *ngFor="let field of [
+                                        {key: 'waterSourceType', label: 'Source Type'},
+                                        {key: 'waterSourceName', label: 'Source Name'},
+                                        {key: 'gpsCoordinates', label: 'GPS Coordinates'}
+                                    ]">
+                        <div class="field-row">
+                            <span class="field-icon">{{ fieldValidationResults[field.key]?.icon }}</span>
+                            <span class="field-label">{{ field.label }}:</span>
+                            <span class="field-status"
+                                  [ngClass]="fieldValidationResults[field.key]?.valid ? 'valid' : 'invalid'">
+                                                {{ fieldValidationResults[field.key]?.message }}
+                                            </span>
+                        </div>
+                        <div class="field-value">{{ fieldValidationResults[field.key]?.value }}</div>
+                    </div>
+                </div>
+
+                <!-- Proposed Use -->
+                <div class="validation-section">
+                    <h6>🌾 Proposed Use</h6>
+                    <div class="field-validation" *ngFor="let field of [
+                                        {key: 'proposedUse', label: 'Use Type'},
+                                        {key: 'abstractionRate', label: 'Abstraction Rate'},
+                                        {key: 'abstractionMethod', label: 'Abstraction Method'}
+                                    ]">
+                        <div class="field-row">
+                            <span class="field-icon">{{ fieldValidationResults[field.key]?.icon }}</span>
+                            <span class="field-label">{{ field.label }}:</span>
+                            <span class="field-status"
+                                  [ngClass]="fieldValidationResults[field.key]?.valid ? 'valid' : 'invalid'">
+                                                {{ fieldValidationResults[field.key]?.message }}
+                                            </span>
+                        </div>
+                        <div class="field-value">{{ fieldValidationResults[field.key]?.value }}</div>
+                    </div>
+                </div>
+
+                <!-- Land Information -->
+                <div class="validation-section">
+                    <h6>🏞️ Land Information</h6>
+                    <div class="field-validation" *ngFor="let field of [
+                                        {key: 'landOwnership', label: 'Ownership Type'},
+                                        {key: 'landTitle', label: 'Title Document'}
+                                    ]">
+                        <div class="field-row">
+                            <span class="field-icon">{{ fieldValidationResults[field.key]?.icon }}</span>
+                            <span class="field-label">{{ field.label }}:</span>
+                            <span class="field-status"
+                                  [ngClass]="fieldValidationResults[field.key]?.valid ? 'valid' : 'invalid'">
+                                                {{ fieldValidationResults[field.key]?.message }}
+                                            </span>
+                        </div>
+                        <div class="field-value">{{ fieldValidationResults[field.key]?.value }}</div>
+                    </div>
+                </div>
+
+                <!-- Technical Specifications -->
+                <div class="validation-section">
+                    <h6>⚙️ Technical Specifications</h6>
+                    <div class="field-validation" *ngFor="let field of [
+                                        {key: 'pumpCapacity', label: 'Pump Capacity'},
+                                        {key: 'pipelineLength', label: 'Pipeline Length'},
+                                        {key: 'storageCapacity', label: 'Storage Capacity'}
+                                    ]">
+                        <div class="field-row">
+                            <span class="field-icon">{{ fieldValidationResults[field.key]?.icon }}</span>
+                            <span class="field-label">{{ field.label }}:</span>
+                            <span class="field-status"
+                                  [ngClass]="fieldValidationResults[field.key]?.valid ? 'valid' : 'invalid'">
+                                                {{ fieldValidationResults[field.key]?.message }}
+                                            </span>
+                        </div>
+                        <div class="field-value">{{ fieldValidationResults[field.key]?.value }}</div>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="validation-section">
+                    <h6>📋 Required Documents</h6>
+                    <div class="field-validation" *ngFor="let field of [
+                                        {key: 'technicalDrawings', label: 'Technical Drawings'},
+                                        {key: 'environmentalClearance', label: 'Environmental Clearance'},
+                                        {key: 'landOwnershipProof', label: 'Land Ownership Proof'}
+                                    ]">
+                        <div class="field-row">
+                            <span class="field-icon">{{ fieldValidationResults[field.key]?.icon }}</span>
+                            <span class="field-label">{{ field.label }}:</span>
+                            <span class="field-status"
+                                  [ngClass]="fieldValidationResults[field.key]?.valid ? 'valid' : 'invalid'">
+                                                {{ fieldValidationResults[field.key]?.message }}
+                                            </span>
+                        </div>
+                        <div class="field-value">{{ fieldValidationResults[field.key]?.value }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proceed to Actions Button -->
+            <div class="review-actions" *ngIf="!loadingReview">
+                <button class="proceed-btn" (click)="proceedToWorkflowActions()">
+                    ➡️ Proceed to Workflow Actions
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

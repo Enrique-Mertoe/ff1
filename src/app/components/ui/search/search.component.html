@@ -1,0 +1,13 @@
+<div fxLayout="row" fxLayout.lt-sm="column">
+  <div fxFlex.gt-sm="30%" fxFlex.lt-sm="100%" class="pb-3">
+    <form [formGroup]="form">
+      <mat-form-field appearance="fill">
+        <input matInput type="text" [placeholder]="placeholder" formControlName="search" autocomplete="off"/>
+        <mat-icon matPrefix>search</mat-icon>
+        <span *ngIf="form.valid" matSuffix mat-icon-button aria-label="Clear" (click)="resetForm()">
+          <mat-icon>close</mat-icon>
+        </span>
+      </mat-form-field>
+    </form>
+  </div>
+</div>

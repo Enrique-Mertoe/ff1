@@ -1,0 +1,132 @@
+<div #invoice class="invoice-container">
+  <!-- QR Code Section -->
+  <div class="header-container">
+    <!-- Left-aligned organization info and QR code -->
+    <div class="header-left">
+      <div class="header-section">
+        <div class="logo-container">
+          <img src="/logo_docs.png" alt="NRWA Logo" class="logo">
+        </div>
+        <div class="header-info">
+          <h1>National Water Resources Authority</h1>
+          <p class="subtitle">Water Rights Management</p>
+          <p>Private Bag 396, Langrove 5, Mikukhin</p>
+        <p>Tel: +265 (0) 313 647 507 | Email: {{email}}</p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Right-aligned QR code -->
+    <div class="qr-container">
+      <qrcode [qrdata]="qrData"
+              [width]="120"
+              [errorCorrectionLevel]="'M'"
+              [colorDark]="'#2c3e50'"
+              [margin]="1"></qrcode>
+      <p class="qr-caption">Scan to pay</p>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- Invoice Metadata -->
+  <div class="invoice-meta">
+    <div class="invoice-number">
+      <strong>INVOICE #:</strong> WR570-2024
+    </div>
+    <div class="invoice-date">
+      <strong>DATE:</strong> {{invoiceDate}}
+    </div>
+  </div>
+
+  <!-- Recipient Info -->
+  <div class="recipient-info">
+    <h3>BILL TO:</h3>
+    <p><strong>RE No. 570</strong></p>
+    <p>Chonbang Water User</p>
+    <p>P.O.Box 96, Chluvina</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Payment Information -->
+  <div class="payment-info">
+    <h3>PAYMENT DETAILS</h3>
+    <div class="bank-details">
+      <p><strong>Bank Name:</strong> National Reserve Bank</p>
+      <p><strong>Account Name:</strong> NRWA Water Rights</p>
+      <p><strong>Account Number:</strong> 1234567890</p>
+      <p><strong>Branch Code:</strong> 987654</p>
+      <p><strong>SWIFT Code:</strong> NRWAMWMW</p>
+      <p><strong>Reference:</strong> WR570-2024</p>
+    </div>
+  </div>
+
+  <!-- Invoice Title -->
+  <div class="invoice-title">
+    <h2>WATER RIGHT RENEWAL INVOICE</h2>
+    <p class="notice">Payment due within 30 days</p>
+  </div>
+
+  <!-- Invoice Table -->
+  <table class="invoice-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th class="text-right">Amount (MWK)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>2024/01/15</td>
+        <td>Water Right Grant Fee (License #1366-997)</td>
+        <td class="text-right negative">125,263.00</td>
+      </tr>
+      <tr>
+        <td>2024/01/15</td>
+        <td>Annual Water Usage Fee (FY 2023/2024)</td>
+        <td class="text-right negative">1,517,448.00</td>
+      </tr>
+      <tr>
+        <td>2024/01/15</td>
+        <td>AWAK Processing Fee</td>
+        <td class="text-right negative">15,000.00</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" class="total-label">TOTAL DUE</td>
+        <td class="text-right total-amount">1,657,711.00</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- Terms and Footer -->
+  <div class="terms">
+    <h3>PAYMENT TERMS</h3>
+    <ul>
+      <li>Payment due within 30 days of invoice date</li>
+      <li>Late payments subject to 2% monthly interest</li>
+      <li>Include invoice number with all payments</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <div class="thank-you">
+      <p>Thank you for your prompt payment</p>
+    </div>
+    <div class="signature">
+      <p>Authorized Signature</p>
+      <div class="signature-line"></div>
+      <p class="signature-name">Dr. James Mwale</p>
+      <p>Chairman, National Water Resources Authority</p>
+    </div>
+  </div>
+</div>
+
+<button mat-raised-button color="primary" (click)="generatePDF()">
+  <mat-icon>picture_as_pdf</mat-icon> DOWNLOAD INVOICE
+</button>
+

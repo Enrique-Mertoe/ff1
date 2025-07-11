@@ -1,0 +1,358 @@
+<div class="application-details-dialog" [class.with-side-panel]="showSidePanel">
+    <div class="dialog-header">
+        <div class="dialog-title">
+            <h3>Application Details - {{ selectedApplication?.applicantName }}</h3>
+            <span class="application-counter">{{ currentApplicationIndex + 1 }}
+                of {{ filteredApplications.length }}</span>
+        </div>
+        <div class="dialog-nav-controls">
+            <button class="nav-btn" (click)="navigateApplication('prev')" [disabled]="!canNavigatePrev()"
+                    title="Previous">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                </svg>
+            </button>
+            <button class="nav-btn" (click)="navigateApplication('next')" [disabled]="!canNavigateNext()"
+                    title="Next">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                </svg>
+            </button>
+            <button class="close-btn" (click)="closeDialog()">×</button>
+        </div>
+    </div>
+
+    <div class="dialog-body">
+        <div class="main-content">
+            <div class="application-info-grid" *ngIf="selectedApplication">
+                <div class="info-section">
+                    <h4>Applicant Information</h4>
+                    <div class="info-row">
+                        <span class="label">Name:</span>
+                        <span class="value">{{ selectedApplication.applicantName }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Email:</span>
+                        <span class="value">{{ selectedApplication.applicantEmail }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Phone:</span>
+                        <span class="value">{{ selectedApplication.applicantPhone || 'N/A' }}</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4>Application Details</h4>
+                    <div class="info-row">
+                        <span class="label">Application ID:</span>
+                        <span class="value">{{ selectedApplication.id }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">License Type:</span>
+                        <span class="value">{{ selectedApplication.licenseType }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Status:</span>
+                        <span class="value">
+                  <span class="status-badge" [style.background-color]="getStatusColor(selectedApplication.status)">
+                    {{ selectedApplication.status }}
+                  </span>
+                </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Submitted:</span>
+                        <span class="value">{{ formatDate(selectedApplication.applicationDate) }}</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4>Payment Information</h4>
+                    <div class="info-row">
+                        <span class="label">Amount:</span>
+                        <span class="value">{{ formatCurrency(selectedApplication.paymentStatus?.amount || selectedApplication.applicationFees || 20000) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Payment Status:</span>
+                        <span class="value">
+                  <span class="payment-badge"
+                        [style.color]="getPaymentStatusColor(selectedApplication.paymentStatus?.status)">
+                    {{ selectedApplication.paymentStatus?.status || 'PENDING' }}
+                  </span>
+                </span>
+                    </div>
+                </div>
+
+                <div class="info-section full-width" *ngIf="selectedApplication.applicationDescription">
+                    <h4>Application Description</h4>
+                    <div class="description-content">
+                        {{ selectedApplication.applicationDescription }}
+                    </div>
+                </div>
+
+                <!-- Current Workflow Step -->
+                <div class="info-section full-width">
+                    <h4>📋 Current Workflow Step</h4>
+                    <div class="workflow-step-info">
+                        <div class="step-details">
+                            <div class="step-header">
+                                <span class="step-number">Step {{ step?.sequenceNumber || 'N/A' }}</span>
+                                <span class="step-name">{{ step?.name || 'Not Started' }}</span>
+                                <span class="step-badge" [ngClass]="getStepStatusClass()">
+                                    {{ getStepStatusText() }}
+                                </span>
+                            </div>
+                            <div class="step-description" *ngIf="step?.description">
+                                {{ step.description }}
+                            </div>
+                            <div class="role-info">
+                                <span class="current-role">👤 Current Handler: {{ getRoleDisplayName() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity History -->
+                <div class="info-section full-width">
+                    <h4>📝 Activity History & Messages</h4>
+                    <div class="activity-timeline">
+                        <div class="loading-activities" *ngIf="loadingActivities">
+                            Loading activity history...
+                        </div>
+                        <div class="no-activities"
+                             *ngIf="!loadingActivities && (!applicationActivities || applicationActivities.length === 0)">
+                            No activities recorded yet.
+                        </div>
+                        <div class="activity-list"
+                             *ngIf="!loadingActivities && applicationActivities && applicationActivities.length > 0">
+                            <div *ngFor="let activity of applicationActivities; trackBy: trackByActivityId"
+                                 class="activity-item"
+                                 [ngClass]="getActivityClass(activity)">
+                                <div class="activity-header">
+                                    <span class="activity-icon">{{ getActivityIcon(activity.activity) }}</span>
+                                    <span class="activity-description">{{ activity.description }}</span>
+                                    <span class="activity-date">{{ formatDate(activity.dateCreated) }}</span>
+                                </div>
+                                <div class="activity-details" *ngIf="activity.comment || activity.userAccount">
+                                    <div class="activity-user" *ngIf="activity.userAccount">
+                                        <span class="user-label">By:</span>
+                                        <span class="user-name">{{ activity.userAccount.firstName }} {{ activity.userAccount.lastName }}</span>
+                                        <span class="user-role">({{ activity.userAccount.sysUserGroup?.name }})</span>
+                                    </div>
+                                    <div class="activity-comment" *ngIf="activity.comment">
+                                        <span class="comment-label">📝 Message:</span>
+                                        <span class="comment-text">{{ activity.comment }}</span>
+                                    </div>
+                                </div>
+                                <!-- Alert for referred back items -->
+                                <div class="activity-alert"
+                                     *ngIf="isReferredBack(activity) && isCurrentUserTarget(activity)">
+                                    <div class="alert-content">
+                                        <span class="alert-icon">⚠️</span>
+                                        <span class="alert-text">This application was referred back to your role for attention.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application Documents -->
+                <div class="info-section full-width" *ngIf="applicationDocuments && applicationDocuments.length > 0">
+                    <h4>📎 Application Documents</h4>
+                    <div class="required-documents">
+                        <div *ngFor="let doc of applicationDocuments" class="document-requirement">
+                            <span class="doc-icon">📄</span>
+                            <span class="doc-name">{{ doc.category || 'Document' }}</span>
+                            <span class="doc-status" [ngClass]="getDocumentStatusClass(doc)">
+                                {{ getDocumentStatusText(doc) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Steps Preview -->
+                <div class="info-section full-width" *ngIf="nextSteps && nextSteps.length > 0">
+                    <h4>🔮 Next Steps in Workflow</h4>
+                    <div class="next-steps-preview">
+                        <div *ngFor="let nextStep of nextSteps; let i = index" class="next-step-item">
+                            <span class="step-number">{{ step?.sequenceNumber + i + 1 }}</span>
+                            <span class="step-name">{{ nextStep.name }}</span>
+                            <span class="step-handler">{{ getStepHandler(nextStep) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Actions Side Panel -->
+        <div class="side-panel bg-white" *ngIf="showSidePanel">
+            <div class="side-panel-header !bg-sky-200">
+                <h4>Workflow Actions</h4>
+                <button class="close-side-panel" (click)="closeSidePanel()">×</button>
+            </div>
+
+            <div class="side-panel-content">
+                <app-review
+
+                        *ngIf="selectedAction==='review'"
+                        [applicationData]="selectedApplication"
+                        (onReferBack)="handleProceed(true)"
+                        (onContinueAnyway)="handleProceed()"
+                >
+                </app-review>
+                <div *ngIf="selectedAction==='finalise'" class="action-form p-2">
+
+                    <!-- Role-based Action Selection -->
+                    <!--                    <div class="form-group">-->
+                    <!--                        <label>Select Action:</label>-->
+                    <!--                        <div class="action-selection">-->
+                    <!--                            <div *ngFor="let action of getRoleBasedActions(); trackBy: trackByValue"-->
+                    <!--                                 class="action-option">-->
+                    <!--                                <label-->
+                    <!--                                        class="action-radio flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-all"-->
+                    <!--                                        [ngClass]="{-->
+                    <!--                                              'opacity-50 cursor-not-allowed border-gray-300': action.disabled,-->
+                    <!--                                              'border-blue-500 hover:bg-blue-50': !action.disabled-->
+                    <!--                                            }"-->
+                    <!--                                >-->
+                    <!--                                    <input-->
+                    <!--                                            type="radio"-->
+                    <!--                                            [(ngModel)]="selectedAction"-->
+                    <!--                                            [value]="action.value"-->
+                    <!--                                            name="workflowAction"-->
+                    <!--                                            [disabled]="action.disabled"-->
+                    <!--                                            class="form-radio text-blue-600 cursor-pointer"-->
+                    <!--                                            [ngClass]="{ 'cursor-not-allowed': action.disabled }"-->
+                    <!--                                    >-->
+
+                    <!--                                    <span class="radio-label flex items-center space-x-1">-->
+                    <!--                                              <span-->
+                    <!--                                                      class="action-icon text-lg"-->
+                    <!--                                                      [ngClass]="action.disabled ? 'text-gray-400' : 'text-blue-600'"-->
+                    <!--                                              >-->
+                    <!--                                                {{ action.icon }}-->
+                    <!--                                              </span>-->
+                    <!--                                              <span-->
+                    <!--                                                      class="action-text font-medium"-->
+                    <!--                                                      [ngClass]="action.disabled ? 'text-gray-400' : 'text-gray-800'"-->
+                    <!--                                              >-->
+                    <!--                                                {{ action.label }}-->
+                    <!--                                              </span>-->
+                    <!--                                            </span>-->
+                    <!--                                </label>-->
+                    <!--                            </div>-->
+
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+
+                    <!--                     Refer Back Target (only shown when refer_back is selected) -->
+                    <div class="form-group" *ngIf="referBack">
+                        <label for="refer-back-to">Refer Back To:</label>
+                        <select id="refer-back-to" [(ngModel)]="referBackTargetStepId" class="form-select">
+                            <option value="">Select Previous Step</option>
+                            <option *ngFor="let step of availableSteps" [value]="step.id">
+                                {{ step.name }} (Step {{ step.sequenceNumber }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Application Review Mode -->
+
+
+                    <!-- Comments Section -->
+                    <div class="form-group" *ngIf="showWorkflowActions">
+                        <label for="officer-comment">{{ getCommentLabel() }}</label>
+                        <textarea
+                                id="officer-comment"
+                                [(ngModel)]="licenseOfficerComment"
+                                (input)="updateCommentSuggestions()"
+                                [placeholder]="getCommentPlaceholder()"
+                                rows="4"
+                                class="comment-textarea"
+                                [class.required-field]=""></textarea>
+
+                        <!-- Comment Suggestions -->
+                        <div class="comment-suggestions" *ngIf="commentSuggestions.length > 0">
+                            <div class="suggestions-label">Suggestions:</div>
+                            <div
+                                    *ngFor="let suggestion of commentSuggestions"
+                                    class="suggestion-item"
+                                    (click)="selectSuggestion(suggestion)">
+                                {{ suggestion }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Attachment -->
+                    <div class="form-group">
+                        <label for="officer-document">Attach Document (Optional):</label>
+                        <input
+                                type="file"
+                                id="officer-document"
+                                (change)="onFileSelected($event)"
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                class="file-input">
+                        <div class="file-info" *ngIf="selectedFile">
+                            📄 {{ selectedFile.name }}
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-budttons gap-2 grid grid-cols-1">
+                        <button mat-stroked-button (click)="closeSidePanel()" class="secondary-btn">
+                            <mat-icon>cancel</mat-icon>
+                            Cancel
+                        </button>
+                        <button mat-raised-button
+                                (click)="submitWorkflowAction()"
+                                [class]="getActionButtonClass()"
+                                class="primary-btn">
+                            <mat-icon>check</mat-icon>
+                            confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-footer">
+        <div class="footer-left">
+            <button class="licensing-officer-btn" (click)="openLicenseOfficerActions()">
+                🏛️ {{ getRoleActionButtonText() }}
+            </button>
+        </div>
+        <div class="footer-right">
+            <button class="secondary-btn" (click)="closeDialog()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- High Z-Index Error Overlay -->
+<div class="error-overlay" *ngIf="workflowError" (click)="clearWorkflowError()">
+  <div class="error-dialog" (click)="$event.stopPropagation()">
+    <div class="error-header">
+      <h3>⚠️ Workflow Configuration Error</h3>
+      <button class="error-close-btn" (click)="clearWorkflowError()">×</button>
+    </div>
+    <div class="error-content">
+      <div class="error-message">
+        {{ workflowError }}
+      </div>
+      <div class="error-details">
+        <p><strong>What this means:</strong></p>
+        <ul>
+          <li>The workflow steps are not configured for this license type</li>
+          <li>Contact your system administrator to set up the workflow</li>
+          <li>This application cannot be processed until the workflow is configured</li>
+        </ul>
+      </div>
+    </div>
+    <div class="error-actions">
+      <button class="error-btn secondary" (click)="clearWorkflowError()">Close</button>
+      <button class="error-btn primary" (click)="contactAdmin()">Contact Admin</button>
+    </div>
+  </div>
+</div>

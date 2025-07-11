@@ -1,0 +1,56 @@
+<ng-container>
+  <button mat-fab color="primary" aria-label="Add button" class="menu-button" matTooltip="Add" (click)="action('create', null)" *ngIf="canAdd">
+    <mat-icon>add</mat-icon>
+  </button>
+
+<!--  <div>&nbsp;</div>-->
+  <mat-card fxLayout="column" class="mat-elevation-z1">
+    <div class="material-table">
+    <app-search (onSearch)="filterData($event)" *ngIf="isFilterable"></app-search>
+    <!-- Table -->
+    <mat-table [dataSource]="tableDataSource" matSort (matSortChange)="sortTable($event)">
+      <ng-container *ngFor="let tableColumn of tableColumns" [matColumnDef]="tableColumn.name">
+
+        <!-- if sortable column header -->
+        <ng-container *ngIf="tableColumn.isSortable && tableColumn.name; else notSortable">
+          <mat-header-cell *matHeaderCellDef [mat-sort-header]="tableColumn.name">
+<!--          <th mat-header-cell *matHeaderCellDef [mat-sort-header]="tableColumn.name">-->
+            {{tableColumn.name}}
+          </mat-header-cell>
+        </ng-container>
+        <!-- else not sortable -->
+        <ng-template #notSortable>
+          <mat-header-cell *matHeaderCellDef>
+            {{tableColumn.name}}
+          </mat-header-cell>>
+        </ng-template>
+
+        <!-- column data -->
+        <mat-cell *matCellDef="let element">
+          {{element | dataPropertyGetter: tableColumn.dataKey}}
+        </mat-cell>>
+      </ng-container>
+      <!-- Action Column class="center-align"-->
+      <ng-container matColumnDef="action" *ngIf="canEdit || canDelete">
+        <mat-header-cell *matHeaderCellDef  style="justify-content: center"> Action </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="action-link"  style="justify-content: center">
+          <span fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="center center">
+            <button mat-button matTooltip="edit" (click)="action('edit',element)" color="primary" *ngIf="canEdit"><mat-icon>edit</mat-icon></button>
+            <button mat-button matTooltip="delete" (click)="action('delete',element)" color="accent" *ngIf="canDelete"><mat-icon>delete</mat-icon></button>
+            <button mat-button matTooltip="delete" (click)="action('download',element)" color="accent" *ngIf="canDownload"><mat-icon>cloud_download</mat-icon></button>
+          </span>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="tableColumns.length">No data matching the filter</td>
+      </tr>
+    </mat-table>
+    <mat-paginator #matPaginator [length]="totalRows" [pageSize]="defaultPageSize"
+                   [pageSizeOptions]="paginationSizes" aria-label="Select page" showFirstLastButtons>
+    </mat-paginator>
+    </div>
+  </mat-card>
+</ng-container>

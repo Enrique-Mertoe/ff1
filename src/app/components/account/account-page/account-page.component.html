@@ -1,0 +1,31 @@
+<div class="container" fxLayout="row" fxLayoutAlign="center none">
+
+  <div fxFlex>
+
+    <mat-card>
+      <mat-card-content>
+        <div fxLayout="row" fxLayout.sm="column" fxLayout.xs="column">
+
+          <div fxFlex="30%" fxFlex.sm="95%" fxFlex.xs="95%">
+            <app-profile-detail></app-profile-detail>
+          </div>
+
+          <div fxFlex></div>
+
+          <div fxFlex="65%" fxFlex.sm="95%" fxFlex.xs="95%">
+
+
+            <mat-tab-group>
+              <mat-tab label="Change Password">
+                <app-change-password></app-change-password>
+              </mat-tab>
+            </mat-tab-group>
+
+
+          </div>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

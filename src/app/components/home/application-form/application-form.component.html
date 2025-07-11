@@ -1,0 +1,8 @@
+<div class="application-form-container">
+  <survey [model]="surveyModel" *ngIf="!isSubmitting"></survey>
+  
+  <div class="loading-overlay" *ngIf="isSubmitting">
+    <mat-spinner></mat-spinner>
+    <p>Submitting your application...</p>
+  </div>
+</div>

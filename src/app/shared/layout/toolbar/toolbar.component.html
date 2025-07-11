@@ -1,0 +1,70 @@
+<mat-toolbar color="primary" class="site-nav-main">
+  <button mat-button  class="sidenav-toggle" (click)="toggleSidenav.emit()"
+          [matTooltip]="!isExpanded ? 'Maximize' : 'Minimize'"
+          matTooltipPosition="right"
+          *ngIf="loggedInUser"
+  >
+    <mat-icon>
+      {{ isExpanded ? "keyboard_backspace" : "dehaze" }}
+<!--      menu-->
+    </mat-icon>
+  </button>
+  <picture>
+    <source media='(min-width:0px)' srcset="logo2.png">
+    <img mat-card-image ngSrc="logo.png" alt="Logo" style="height: 120px; width: 120px">
+  </picture>
+  <span>{{titleService.getTitle()}}</span>
+
+    <span class="navbar-spacer"></span>
+  <span position="end">
+    <a mat-button routerLink="/home" routerLinkActive="active">Home</a>
+<!--    <a mat-button routerLink="/application" routerLinkActive="active">Services</a>-->
+    <a mat-button routerLinkActive="active"  (click)="showAbout()">About</a>
+    <a mat-button routerLink="/auth/sign-in" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" *ngIf="!loggedInUser" matTooltip="Login">Sign-in</a>
+    <a mat-button routerLink="/auth/sign-up" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" *ngIf="!loggedInUser" matTooltip="Create account">Sign-up</a>
+  </span>
+  <ng-container  *ngIf="loggedInUser">
+  <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
+    <mat-icon matBadge="2" aria-hidden="false" matBadgeColor="accent">notifications</mat-icon>
+  </button>
+  <mat-menu #notificationMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false" class="profile">
+
+    <a mat-menu-item>
+      <span>Last login: {{loggedInUser?.lastLogin | localDate: 'ddd DD MMM yy hh:mm a'}}</span>
+    </a>
+    <a mat-menu-item>
+      <span>Your role: {{loggedInUser?.sysUserGroup?.name}}</span>
+    </a>
+
+  </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="userAccountMenu">
+      <mat-icon>person</mat-icon>
+      <span fxShow fxHide.xs>
+          {{userName}}
+        </span>
+    </button>
+  <mat-menu #userAccountMenu xPosition="before" yPosition="above" [overlapTrigger]="false">
+    <button mat-menu-item [routerLink]="['/workflow']" *ngIf="hasWorkflowTasks()">
+      <mat-icon>assignment_turned_in</mat-icon><span>My Workflow Tasks</span>
+    </button>
+    <button mat-menu-item [routerLink]="['/my-applications']">
+      <mat-icon>list</mat-icon><span>My Applications</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item [routerLink]="['/account/profile']">
+      <mat-icon>person</mat-icon><span>My Account</span>
+    </button>
+    <button mat-menu-item routerLink="#">
+      <mat-icon>settings</mat-icon><span>Settings</span>
+    </button>
+    <button mat-menu-item routerLink="#">
+      <mat-icon>help</mat-icon><span>Help</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>Logout
+    </button>
+  </mat-menu>
+  </ng-container>
+</mat-toolbar>

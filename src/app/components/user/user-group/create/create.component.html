@@ -1,0 +1,22 @@
+<form [formGroup]="groupForm">
+  <mat-card>
+    <mat-card-header>
+      <!--      <mat-card-title>Group {{group? "Edit": " Create"}}</mat-card-title>-->
+    </mat-card-header>
+    <mat-card-content>
+      <div fxLayout="row" fxFlexFill fxLayout.lt-sm="column" fxLayoutGap="16px">
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Group name" }}</mat-label>
+          <input matInput type="text" placeholder="Group name" formControlName="name">
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>{{ "Description" }}</mat-label>
+          <input  matInput type="text" placeholder="Group description" formControlName="description">
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button  color="primary" (click)="save()" [disabled]="groupForm.invalid">Save</button>
+    </mat-card-actions>
+  </mat-card>
+</form>

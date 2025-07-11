@@ -1,0 +1,95 @@
+<mat-tab-group>
+  <mat-tab label="New License" class="secondTab">
+    <div class="container tab-container" fxLayout="row wrap" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5% grid" fxLayoutAlign="start center">
+      <div fxFlex="20%" fxFlex.gt-xs="50%" [fxFlex.gt-md]="regularDistribution" *ngFor="let license of newLicenses">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title class="text-oneline">{{license.name}}</mat-card-title>
+            <!--        <mat-card-subtitle>World!</mat-card-subtitle>-->
+          </mat-card-header>
+                <img mat-card-image src="water04.jpg" alt="App Icon">
+          <mat-card-content>
+                    <p>{{license.description | limitTo:100}}</p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-button (click)="onLicenseTypeSelect(license)">
+              Apply
+              <mat-icon iconPositionEnd>chevron_right</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Renew License" class="secondTab">
+    <div class="container tab-container" fxLayout="row wrap" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5% grid" fxLayoutAlign="start center">
+      <div fxFlex="20%" fxFlex.gt-xs="50%" [fxFlex.gt-md]="regularDistribution" *ngFor="let license of renewLicenses">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title class="text-oneline">{{license.name}}</mat-card-title>
+            <!--        <mat-card-subtitle>World!</mat-card-subtitle>-->
+          </mat-card-header>
+                <img mat-card-image src="water04.jpg" alt="App Icon">
+          <mat-card-content>
+                    <p>{{license.description | limitTo:100}}</p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-button (click)="onLicenseTypeSelect(license)">
+              Apply
+              <mat-icon iconPositionEnd>chevron_right</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab class="my-custom-class" label="License Variation" class="thirdTab">
+    <div class="container tab-container" fxLayout="row wrap" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5% grid" fxLayoutAlign="start center">
+      <div fxFlex="20%" fxFlex.gt-xs="50%" [fxFlex.gt-md]="regularDistribution" *ngFor="let license of variationLicense">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title class="text-oneline">{{license.name}}</mat-card-title>
+            <!--        <mat-card-subtitle>World!</mat-card-subtitle>-->
+          </mat-card-header>
+                <img mat-card-image src="water04.jpg" alt="App Icon">
+          <mat-card-content>
+                    <p>{{license.description | limitTo:100}}</p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-button (click)="onLicenseTypeSelect(license)">
+              Apply
+              <mat-icon iconPositionEnd>chevron_right</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
+
+  <mat-tab class="my-custom-class" label="Transfer License" class="forthTab">
+    <div class="container tab-container" fxLayout="row wrap" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5% grid" fxLayoutAlign="start center">
+      <div fxFlex="20%" fxFlex.gt-xs="50%" [fxFlex.gt-md]="regularDistribution" *ngFor="let license of transferLicense">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title class="text-oneline">{{license.name}}</mat-card-title>
+            <!--        <mat-card-subtitle>World!</mat-card-subtitle>-->
+          </mat-card-header>
+                <img mat-card-image src="water04.jpg" alt="App Icon">
+          <mat-card-content>
+                    <p>{{license.description | limitTo:100}}</p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-button (click)="onLicenseTypeSelect(license)">
+              Apply
+              <mat-icon iconPositionEnd>chevron_right</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+
+<br/>
+<app-license></app-license>

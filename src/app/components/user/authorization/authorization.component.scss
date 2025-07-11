@@ -1,0 +1,52 @@
+.mod-select-tabs {
+  display: flex;
+  direction: ltr;
+  gap: 15px;
+  padding: 10px;
+}
+.add-role-footer {
+
+  display: flex;
+  direction: ltr;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+tbody tr:nth-of-type(odd) {
+  background-color: rgb(0 0 0 / 0.02) !important;
+}
+
+tr td:last-child {
+  height: 32px;
+}
+
+td {
+  border-bottom-color: #e0e0e0;
+  padding: 8px;
+}
+.mat-mdc-checkbox {
+  display: block;
+}
+th {
+  text-align: start;
+  cursor: pointer;
+}
+
+.table-container {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container thead {
+  position: sticky;
+  top: 0;
+  background-color: #fafafa;
+  z-index: 1;
+}

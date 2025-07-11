@@ -1,0 +1,11 @@
+<div class="profile-card">
+  <img src="images/user.png" [alt]="userAccount.username">
+
+  <h3 class="title">
+    {{userAccount.sysSalutation?.name}} {{userAccount.firstName}} {{userAccount.lastName}}
+  </h3>
+  <h3>({{userAccount.sysUserGroup?.name}})</h3>
+  <label>
+    {{userAccount.emailAddress}}
+  </label>
+</div>

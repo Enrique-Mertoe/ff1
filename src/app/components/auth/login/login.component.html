@@ -1,0 +1,40 @@
+
+<div class="main__container">
+  <div class="login-card">
+
+    <main class="login-content">
+      <span class="login-header">Login</span>
+      <!-- login form -->
+
+      <form [formGroup]="loginForm" class="login-form">
+        <input type="text" autofocus placeholder="Username" formControlName="username" class="login-input" required>
+        <input type="password" placeholder="Password" formControlName="password" class="login-input" minlength="6" required>
+
+<!--        <div class="full-width">-->
+<!--          <mat-slide-toggle formControlName="rememberMe">Remember me</mat-slide-toggle>-->
+<!--        </div>-->
+        <input type="submit" name="submit" value="Login" class="login-btn" [class.btn-disabled]="!loginForm.valid" [matTooltip]="loginForm.valid? 'Login': 'Invalid form'"
+               [disabled]="!loginForm.valid" (click)="login()">
+
+<!--        <button mat-raised-button id="login" color="primary" [disabled]="loginForm.invalid || loading"-->
+<!--                (click)="login()">Login</button>-->
+        &nbsp;
+        <button mat-button id="resetPassword" (click)="resetPassword()" type="button">Reset Password</button>
+      </form>
+      <div class="signup-link-wrapper">
+        <span class="signup-notice">Don't have an account?</span>
+        <a class="signup-link" routerLink="/auth/sign-up">Sign up</a>
+      </div>
+
+    </main>
+
+    <!-- linking to signup -->
+    <aside class="login-aside">
+      <div class="login-aside-overlay"></div>
+      <h1 class="login-welcome-text">Welcome Back!</h1>
+      <hr class="login-aside-hr">
+    </aside>
+  </div>
+</div>
+
+<app-error [message]="errorMessage"></app-error>
