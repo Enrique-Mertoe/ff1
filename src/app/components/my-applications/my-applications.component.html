@@ -44,31 +44,9 @@
             </span>
           </td>
           <td class="actions-cell">
-            <div class="dropdown-container">
-              <button class="dropdown-trigger" (click)="toggleDropdown(i)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="1"></circle>
-                  <circle cx="12" cy="5" r="1"></circle>
-                  <circle cx="12" cy="19" r="1"></circle>
-                </svg>
-              </button>
-              <div class="dropdown-menu" [class.show]="activeDropdown === i">
-                <button class="dropdown-item" (click)="viewApplication(app); closeDropdown()">
-                  👁️ View Details
-                </button>
-                <button class="dropdown-item" (click)="previewInvoice(app); closeDropdown()">
-                  📄 Preview Invoice
-                </button>
-                <button class="dropdown-item" (click)="payNow(app); closeDropdown()" 
-                        *ngIf="app.paymentStatus?.status === 'PENDING'">
-                  💳 Make Payment
-                </button>
-                <button class="dropdown-item" (click)="uploadReceipt(app); closeDropdown()" 
-                        *ngIf="app.paymentStatus?.status === 'PENDING'">
-                  📎 Upload Receipt
-                </button>
-              </div>
-            </div>
+            <button mat-icon-button [matMenuTriggerFor]="menu" (click)="setSelectedApp(app)">
+              <mat-icon>more_vert</mat-icon>
+            </button>
           </td>
         </tr>
       </tbody>
@@ -299,3 +277,25 @@
     </div>
   </div>
 </div>
+
+<!-- Actions Menu -->
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="viewApplication(selectedApp)" *ngIf="selectedApp">
+    <mat-icon>visibility</mat-icon>
+    <span>View Details</span>
+  </button>
+  <button mat-menu-item (click)="previewInvoice(selectedApp)" *ngIf="selectedApp">
+    <mat-icon>description</mat-icon>
+    <span>Preview Invoice</span>
+  </button>
+  <button mat-menu-item (click)="payNow(selectedApp)" 
+          *ngIf="selectedApp?.paymentStatus?.status === 'PENDING'">
+    <mat-icon>payment</mat-icon>
+    <span>Make Payment</span>
+  </button>
+  <button mat-menu-item (click)="uploadReceipt(selectedApp)" 
+          *ngIf="selectedApp?.paymentStatus?.status === 'PENDING'">
+    <mat-icon>attach_file</mat-icon>
+    <span>Upload Receipt</span>
+  </button>
+</mat-menu>

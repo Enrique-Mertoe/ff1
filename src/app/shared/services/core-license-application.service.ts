@@ -3,6 +3,7 @@ import {CoreLicenseApplication} from "../schema/core-license-application";
 import {CrudService} from "./crud.service";
 import {ApiService} from "./api.service";
 import {CoreApplicationStep} from "../schema/core-application-step";
+import {CoreApplicationStatus} from "../models/core-application-status";
 
 @Injectable({
     providedIn: 'root'
@@ -68,7 +69,23 @@ export class CoreLicenseApplicationService extends CrudService<CoreLicenseApplic
             throw error;
         }
     }
-    async getApplicationStep(applicationId: string): Promise<CoreApplicationStep|null> {
+
+    async updateStatus(applicationId: string, status: CoreApplicationStatus): Promise<any> {
+        try {
+            const res = await this.apiService.api<any[]>("GET", "/application-statuses?page=0&limit=50")
+
+            const stausId = res.filter((item: any) => item.name === status)[0].id
+            const data = {
+                application_status_id: stausId
+            }
+            return await this.apiService.api<any>('PUT', `/license-applications/${applicationId}`,data);
+        } catch (error) {
+            console.error('Error getting application status:', error);
+            throw error;
+        }
+    }
+
+    async getApplicationStep(applicationId: string): Promise<CoreApplicationStep | null> {
         try {
             return await this.apiService.api<any>('GET', `/application-steps/${applicationId}`);
         } catch (error) {
@@ -130,7 +147,7 @@ export class CoreLicenseApplicationService extends CrudService<CoreLicenseApplic
         }
     }
 
-    async getApplicationsById(id:string):Promise<CoreLicenseApplication> {
+    async getApplicationsById(id: string): Promise<CoreLicenseApplication> {
         try {
             return await this.apiService.api<CoreLicenseApplication>('GET', `/license-applications/${id}`);
         } catch (error) {

@@ -82,75 +82,7 @@
   position: relative;
 }
 
-.dropdown-container {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-trigger {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  transition: all 0.2s;
-}
-
-.dropdown-trigger:hover {
-  background-color: #f0f0f0;
-  color: #333;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  min-width: 160px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.2s ease;
-}
-
-.dropdown-menu.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 10px 15px;
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  color: #333;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #f8f9fa;
-}
-
-.dropdown-item:first-child {
-  border-radius: 6px 6px 0 0;
-}
-
-.dropdown-item:last-child {
-  border-radius: 0 0 6px 6px;
-}
+/* Custom dropdown styles removed - using Angular Material menu */
 
 .no-applications {
   text-align: center;

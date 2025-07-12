@@ -4,3 +4,4 @@ export interface CoreApplicationStatus extends BaseEntity {
   name: string;
   description: string;
 }
+

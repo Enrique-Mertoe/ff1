@@ -12,13 +12,14 @@ import {SysUserAccountManager} from "../../../shared/managers/user.manager";
 import {CoreApplicationStep} from "../../../shared/schema/core-application-step";
 import {CoreLicenseApplication} from "../../../shared/schema/core-license-application";
 import {ReviewComponent} from "./review.component";
+import {ApproveAssessmentComponent} from "./approve-assessment.component";
 
 @Component({
     selector: 'app-application-details-dialog',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatButton, MatIconModule, ReviewComponent, MatIcon],
+    imports: [CommonModule, FormsModule, MatButton, MatIconModule, ReviewComponent, MatIcon, ApproveAssessmentComponent],
     templateUrl: './application-details-dialog.component.html',
-    styleUrls: ['./application-details-dialog.component.scss']
+    styleUrls: ['./application-details-dialog.component.scss', './error-overlay.scss']
 })
 export class ApplicationDetailsDialogComponent implements OnInit {
 
@@ -31,7 +32,8 @@ export class ApplicationDetailsDialogComponent implements OnInit {
     selectedFile: File | null = null;
     predefinedComments: string[] = [];
     commentSuggestions: string[] = [];
-    selectedAction: string = 'review'; // approve, refer_back, reject
+    selectedAction: string = 'review';
+    backAction: string = '';
     referBack: boolean = false; // previous approver to refer back to
     referBackTargetStepId: string = ''; // target step ID for refer back
     availableSteps: any[] = []; // available previous steps
@@ -120,6 +122,9 @@ export class ApplicationDetailsDialogComponent implements OnInit {
     }
 
     closeSidePanel() {
+        setTimeout(() => {
+            this.selectedAction = this.backAction || ''
+        }, 200)
         this.showSidePanel = false;
     }
 
@@ -237,14 +242,14 @@ export class ApplicationDetailsDialogComponent implements OnInit {
     async approveApplication(actionData: any) {
         try {
             let response;
-            
+
             if (this.selectedFile) {
                 // Use multipart form data when file is uploaded
                 const formData = new FormData();
                 formData.append('license_application_id', actionData.applicationId);
                 formData.append('notes', actionData.comment || '');
                 formData.append('document', this.selectedFile);
-                
+
                 response = await this.apiService.postFormData('/workflow/confirm-document', formData);
             } else {
                 // Use JSON when no file is uploaded
@@ -261,10 +266,10 @@ export class ApplicationDetailsDialogComponent implements OnInit {
         } catch (error: any) {
             console.error('Error confirming document:', error);
             const errorMessage = error.error?.error || 'Failed to confirm document';
-            
+
             // Show workflow configuration errors in overlay
-            if (errorMessage.includes('No steps found for license type') || 
-                errorMessage.includes('workflow') || 
+            if (errorMessage.includes('No steps found for license type') ||
+                errorMessage.includes('workflow') ||
                 errorMessage.includes('configuration')) {
                 this.workflowError = errorMessage;
             } else {
@@ -784,6 +789,7 @@ export class ApplicationDetailsDialogComponent implements OnInit {
 
     handleProceed(referBack: boolean = false) {
         this.referBack = referBack
+        this.backAction = this.selectedAction
         this.selectedAction = "finalise"
         this.showWorkflowActions = true
     }

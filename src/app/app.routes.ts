@@ -45,6 +45,11 @@ export const routes: Routes = [
         loadComponent: () => import('./components/accountant/accountant-dashboard.component').then(m => m.AccountantDashboardComponent),
         canActivate: [AuthGuard, CanAccessGuard]
       },
+      { 
+        path: 'approvals/new-approvals', 
+        loadComponent: () => import('./components/new-approvals/new-approvals.component').then(m => m.NewApprovalsComponent),
+        canActivate: [AuthGuard]
+      },
       { path: 'admin', loadChildren: () => import('./components/admin/admin.routes').then(m => m.ADMIN_ROUTES), canActivate: [AuthGuard, CanAccessGuard] },
       // { path: 'programmes', loadChildren: () => import('./components/programmes/programmes.routes').then(m => m.PROGRAMMES_ROUTES) },
       // { path: 'media-resources', loadChildren: () => import('./components/media-resources/media-resources.routes').then(m => m.MEDIA_RESOURCES_ROUTES) },

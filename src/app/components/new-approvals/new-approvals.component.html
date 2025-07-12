@@ -1,0 +1,103 @@
+<div class="new-approvals-container">
+  <div class="header">
+    <h2>New Approvals</h2>
+    <p *ngIf="currentUserRole === 'licensing_officer'">Applications with REVIEW_APPROVED status ready for licensing officer actions</p>
+    <p *ngIf="currentUserRole === 'licensing_manager' || currentUserRole === 'license_manager'">Applications with AWAITING_MANAGER_REVIEW status ready for manager review</p>
+    <p *ngIf="currentUserRole === 'drs'">Applications with PENDING_SCHEDULE_AUTHORIZATION status ready for DRS authorization</p>
+    <p *ngIf="currentUserRole === 'ceo'">Applications with AUTHORIZED_SCHEDULE status ready for CEO approval</p>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    Loading approved applications...
+  </div>
+
+  <div class="applications-table" *ngIf="!loading && applications.length > 0">
+    <table class="applications-table-content">
+      <thead>
+        <tr>
+          <th>Application ID</th>
+          <th>Applicant</th>
+          <th>License Type</th>
+          <th>{{ currentUserRole === 'ceo' ? 'Schedule Date' : 'Application Date' }}</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let app of applications">
+          <td>{{ app.id.substring(0, 8) }}...</td>
+          <td>{{ app.applicantName }}</td>
+          <td>{{ app.licenseType }}</td>
+          <td>
+            <span *ngIf="currentUserRole === 'ceo' && app.recommendedScheduleDate">
+              {{ formatDate(app.recommendedScheduleDate) }}
+            </span>
+            <span *ngIf="currentUserRole !== 'ceo' || !app.recommendedScheduleDate">
+              {{ formatDate(app.applicationDate) }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" style="background-color: #28a745;">
+              {{ app.status }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button mat-icon-button [matMenuTriggerFor]="menu" (click)="setSelectedApp(app)">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="no-applications" *ngIf="!loading && applications.length === 0">
+    <h3>No Approved Applications</h3>
+    <p>There are currently no applications with REVIEW_APPROVED status.</p>
+    <button (click)="loadApprovedApplications()">Refresh</button>
+  </div>
+</div>
+
+<!-- Actions Menu -->
+<mat-menu #menu="matMenu">
+  <!-- Debug Info -->
+  <div style="padding: 8px; font-size: 12px; color: #666;">
+    Role: {{ currentUserRole }}<br>
+    App: {{ selectedApp?.id?.substring(0, 8) }}
+  </div>
+  
+  <!-- Licensing Officer Actions -->
+  <button mat-menu-item (click)="openAssessmentDialog()" 
+          *ngIf="selectedApp && currentUserRole === 'licensing_officer'">
+    <mat-icon>assignment</mat-icon>
+    <span>Complete Assessment</span>
+  </button>
+  
+  <!-- License Manager Actions -->
+  <button mat-menu-item (click)="viewAssessment()" 
+          *ngIf="selectedApp && (currentUserRole === 'licensing_manager' || currentUserRole === 'license_manager')">
+    <mat-icon>visibility</mat-icon>
+    <span>Review Assessment</span>
+  </button>
+  
+  <!-- DRS Actions -->
+  <button mat-menu-item (click)="viewScheduleForAuthorization()" 
+          *ngIf="selectedApp && currentUserRole === 'drs'">
+    <mat-icon>schedule</mat-icon>
+    <span>Authorize Schedule</span>
+  </button>
+  
+  <!-- CEO Actions -->
+  <button mat-menu-item (click)="viewForCEOApproval()" 
+          *ngIf="selectedApp && currentUserRole === 'ceo'">
+    <mat-icon>approval</mat-icon>
+    <span>CEO Approval</span>
+  </button>
+  
+  <!-- Fallback for debugging -->
+  <button mat-menu-item *ngIf="!selectedApp">
+    <span>No app selected</span>
+  </button>
+</mat-menu>
+
+<!-- Material Dialog will be opened programmatically -->

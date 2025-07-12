@@ -173,7 +173,7 @@
                 </div>
 
                 <!-- Next Steps Preview -->
-                <div class="info-section full-width" *ngIf="nextSteps && nextSteps.length > 0">
+                <div class="info-section full-width" *ngIf="!nextSteps && nextSteps.length > 0">
                     <h4>🔮 Next Steps in Workflow</h4>
                     <div class="next-steps-preview">
                         <div *ngFor="let nextStep of nextSteps; let i = index" class="next-step-item">
@@ -202,6 +202,13 @@
                         (onContinueAnyway)="handleProceed()"
                 >
                 </app-review>
+                <app-approve-assessment
+                        [applicationData]="selectedApplication"
+                        (onReferBack)="handleProceed(true)"
+                        *ngIf="selectedAction === 'approve_field_assessment'"
+                >
+
+                </app-approve-assessment>
                 <div *ngIf="selectedAction==='finalise'" class="action-form p-2">
 
                     <!-- Role-based Action Selection -->
@@ -332,27 +339,27 @@
 
 <!-- High Z-Index Error Overlay -->
 <div class="error-overlay" *ngIf="workflowError" (click)="clearWorkflowError()">
-  <div class="error-dialog" (click)="$event.stopPropagation()">
-    <div class="error-header">
-      <h3>⚠️ Workflow Configuration Error</h3>
-      <button class="error-close-btn" (click)="clearWorkflowError()">×</button>
+    <div class="error-dialog" (click)="$event.stopPropagation()">
+        <div class="error-header">
+            <h3>⚠️ Workflow Configuration Error</h3>
+            <button class="error-close-btn" (click)="clearWorkflowError()">×</button>
+        </div>
+        <div class="error-content">
+            <div class="error-message">
+                {{ workflowError }}
+            </div>
+            <div class="error-details">
+                <p><strong>What this means:</strong></p>
+                <ul>
+                    <li>The workflow steps are not configured for this license type</li>
+                    <li>Contact your system administrator to set up the workflow</li>
+                    <li>This application cannot be processed until the workflow is configured</li>
+                </ul>
+            </div>
+        </div>
+        <div class="error-actions">
+            <button class="error-btn secondary" (click)="clearWorkflowError()">Close</button>
+            <button class="error-btn primary" (click)="contactAdmin()">Contact Admin</button>
+        </div>
     </div>
-    <div class="error-content">
-      <div class="error-message">
-        {{ workflowError }}
-      </div>
-      <div class="error-details">
-        <p><strong>What this means:</strong></p>
-        <ul>
-          <li>The workflow steps are not configured for this license type</li>
-          <li>Contact your system administrator to set up the workflow</li>
-          <li>This application cannot be processed until the workflow is configured</li>
-        </ul>
-      </div>
-    </div>
-    <div class="error-actions">
-      <button class="error-btn secondary" (click)="clearWorkflowError()">Close</button>
-      <button class="error-btn primary" (click)="contactAdmin()">Contact Admin</button>
-    </div>
-  </div>
 </div>

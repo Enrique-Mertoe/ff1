@@ -2,6 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { COMMON_MODULES } from '../../custom-material/custom-material.module';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { CoreLicenseApplicationService } from '../../shared/services/core-license-application.service';
 import { SurfaceWaterPermitService } from '../../shared/services/surface-water-permit.service';
 import { AuthService } from '../../shared/services/auth.service';
@@ -11,7 +14,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-my-applications',
   standalone: true,
-  imports: [CommonModule, FormsModule, ...COMMON_MODULES],
+  imports: [CommonModule, FormsModule, ...COMMON_MODULES, MatMenuModule, MatIconModule, MatButtonModule],
   templateUrl: './my-applications.component.html',
   styleUrl: './my-applications.component.scss'
 })
@@ -27,7 +30,7 @@ export class MyApplicationsComponent implements OnInit {
   showInvoicePreview: boolean = false;
   showReceiptUpload: boolean = false;
   currentUser: any = null;
-  activeDropdown: number | null = null;
+  selectedApp: any = null;
   invoicePreviewUrl: string = '';
   selectedFile: File | null = null;
   paymentMethods: any[] = [
@@ -397,12 +400,8 @@ export class MyApplicationsComponent implements OnInit {
     }).format(amount)}`;
   }
 
-  toggleDropdown(index: number) {
-    this.activeDropdown = this.activeDropdown === index ? null : index;
-  }
-
-  closeDropdown() {
-    this.activeDropdown = null;
+  setSelectedApp(app: any) {
+    this.selectedApp = app;
   }
 
   downloadReceiptTemplate() {
