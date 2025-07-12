@@ -266,14 +266,21 @@ export class ReviewComponent implements OnInit {
     }
 
     startReview(): void {
+        console.log('=== STARTING APPLICATION REVIEW ===');
+        console.log('Current application data:', this.applicationData);
+        
         this.loadingReview = true;
         this.showReviewMode = true;
 
-        // Simulate API call
-        setTimeout(() => {
+        // Initialize the review data immediately since we already have the application data
+        this.initializeMockData().then(() => {
             this.performReviewAnalysis();
             this.loadingReview = false;
-        }, 2000);
+            console.log('=== REVIEW INITIALIZATION COMPLETE ===');
+        }).catch(error => {
+            console.error('=== ERROR DURING REVIEW INITIALIZATION ===', error);
+            this.loadingReview = false;
+        });
     }
 
     closeReviewMode(): void {
@@ -305,12 +312,40 @@ export class ReviewComponent implements OnInit {
     }
 
     private async initializeMockData(): Promise<void> {
-        console.log("dsssd",this.applicationData)
-        const res = this.applicationData = await this.laService.getApplicationsById(
-            this.applicationData.id
-        );
-        this.la = new LicenseApplicationManager(res  as any)
-        const dt = this.la;
+        console.log('=== INITIALIZING APPLICATION REVIEW DATA ===');
+        console.log('Input applicationData:', this.applicationData);
+        console.log('Application ID:', this.applicationData?.id);
+        
+        try {
+            console.log('=== CALLING API TO GET APPLICATION DETAILS ===');
+            console.log('Making API call to get application by ID:', this.applicationData.id);
+            
+            const res = await this.laService.getApplicationsById(this.applicationData.id);
+            console.log('=== API RESPONSE RECEIVED ===');
+            console.log('Raw API response:', res);
+            console.log('Response type:', typeof res);
+            console.log('Response keys:', Object.keys(res || {}));
+            
+            this.applicationData = res;
+            this.la = new LicenseApplicationManager(res as any);
+            const dt = this.la;
+            
+            console.log('=== LICENSE APPLICATION MANAGER CREATED ===');
+            console.log('Manager raw data:', dt.raw);
+            console.log('Manager applicant name:', dt.applicantName);
+            console.log('Manager applicant email:', dt.applicantEmail);
+            
+            // Log specific field values for debugging
+            console.log('=== FIELD VALUES FOR VALIDATION ===');
+            console.log('sourceVillage:', dt.raw?.sourceVillage);
+            console.log('sourceTa:', dt.raw?.sourceTa);
+            console.log('sourceHectarage:', dt.raw?.sourceHectarage);
+            console.log('destVillage:', dt.raw?.destVillage);
+            console.log('destTa:', dt.raw?.destTa);
+            console.log('destHectarage:', dt.raw?.destHectarage);
+            console.log('altWaterSource:', dt.raw?.altWaterSource);
+            console.log('altOtherWater:', dt.raw?.altOtherWater);
+            console.log('nearbyWaterUtilityBoard:', dt.raw?.nearbyWaterUtilityBoard);
         
         // Helper function to validate field
         const validateField = (value: any, fieldName: string): ValidationResult => {
@@ -320,41 +355,62 @@ export class ReviewComponent implements OnInit {
             return {icon: 'check_circle', message: 'Valid', valid: true, value: String(value)};
         };
 
+        console.log('=== MAPPING FIELDS FOR VALIDATION ===');
+        console.log('Available data keys:', Object.keys(res || {}));
+        
         this.fieldValidationResults = {
-            // Applicant Information
-            'applicantName': validateField(dt.applicantName, 'applicantName'),
-            'applicantEmail': validateField(dt.applicantEmail, 'applicantEmail'),
-            'applicantPhone': validateField(dt.applicantPhone, 'applicantPhone'),
+            // Applicant Information - use direct properties from response
+            'applicantName': validateField(res.applicantName, 'applicantName'),
+            'applicantEmail': validateField(res.applicantEmail, 'applicantEmail'),
+            'applicantPhone': validateField(res.applicantPhone || res.clientTelephone || res.clientMobile, 'applicantPhone'),
 
-            // Source Location
-            'sourceEasting': validateField(dt.raw.sourceEasting, 'sourceEasting'),
-            'sourceNorthing': validateField(dt.raw.sourceNorthing, 'sourceNorthing'),
-            'sourceOwnerFullname': validateField(dt.raw.sourceOwnerFullname, 'sourceOwnerFullname'),
-            'sourcePlotNumber': validateField(dt.raw.sourcePlotNumber, 'sourcePlotNumber'),
-            'sourceTa': validateField(dt.raw.sourceTa, 'sourceTa'),
-            'sourceVillage': validateField(dt.raw.sourceVillage, 'sourceVillage'),
-            'sourceHectarage': validateField(dt.raw.sourceHectarage, 'sourceHectarage'),
-            'sourceLandRegime': validateField(dt.raw.sourceLandRegime, 'sourceLandRegime'),
+            // Source Location - use direct properties from response
+            'sourceEasting': validateField(res.sourceEasting, 'sourceEasting'),
+            'sourceNorthing': validateField(res.sourceNorthing, 'sourceNorthing'),
+            'sourceOwnerFullname': validateField(res.sourceOwnerFullname, 'sourceOwnerFullname'),
+            'sourcePlotNumber': validateField(res.sourcePlotNumber, 'sourcePlotNumber'),
+            'sourceTa': validateField(res.sourceTa, 'sourceTa'),
+            'sourceVillage': validateField(res.sourceVillage, 'sourceVillage'),
+            'sourceHectarage': validateField(res.sourceHectarage, 'sourceHectarage'),
+            'sourceLandRegime': validateField(res.sourceLandRegimeName, 'sourceLandRegime'),
 
-            // Destination Location
-            'destEasting': validateField(dt.raw.destEasting, 'destEasting'),
-            'destNorthing': validateField(dt.raw.destNorthing, 'destNorthing'),
-            'destOwnerFullname': validateField(dt.raw.destOwnerFullname, 'destOwnerFullname'),
-            'destPlotNumber': validateField(dt.raw.destPlotNumber, 'destPlotNumber'),
-            'destTa': validateField(dt.raw.destTa, 'destTa'),
-            'destVillage': validateField(dt.raw.destVillage, 'destVillage'),
-            'destHectarage': validateField(dt.raw.destHectarage, 'destHectarage'),
-            'destLandRegime': validateField(dt.raw.destLandRegime, 'destLandRegime'),
+            // Destination Location - use direct properties from response
+            'destEasting': validateField(res.destEasting, 'destEasting'),
+            'destNorthing': validateField(res.destNorthing, 'destNorthing'),
+            'destOwnerFullname': validateField(res.destOwnerFullname, 'destOwnerFullname'),
+            'destPlotNumber': validateField(res.destPlotNumber, 'destPlotNumber'),
+            'destTa': validateField(res.destTa, 'destTa'),
+            'destVillage': validateField(res.destVillage, 'destVillage'),
+            'destHectarage': validateField(res.destHectarage, 'destHectarage'),
+            'destLandRegime': validateField(res.destLandRegimeName, 'destLandRegime'),
 
-            // Water Source & Permit Details
-            'coreWaterSource': validateField(dt.raw.coreWaterSource, 'coreWaterSource'),
-            'altWaterSource': validateField(dt.raw.altWaterSource, 'altWaterSource'),
-            'altOtherWater': validateField(dt.raw.altOtherWater, 'altOtherWater'),
-            'nearbyWaterUtilityBoard': validateField(dt.raw.nearbyWaterUtilityBoard, 'nearbyWaterUtilityBoard'),
-            'existingBoreholeCount': validateField(dt.raw.existingBoreholeCount, 'existingBoreholeCount'),
-            'permitDuration': validateField(dt.raw.permitDuration, 'permitDuration'),
-            'dateSubmitted': validateField(dt.raw.dateSubmitted, 'dateSubmitted')
+            // Water Source & Permit Details - use direct properties from response
+            'coreWaterSource': validateField(res.waterSourceName, 'coreWaterSource'),
+            'altWaterSource': validateField(res.altWaterSource, 'altWaterSource'),
+            'altOtherWater': validateField(res.altOtherWater, 'altOtherWater'),
+            'nearbyWaterUtilityBoard': validateField(res.nearbyWaterUtilityBoard, 'nearbyWaterUtilityBoard'),
+            'existingBoreholeCount': validateField(res.existingBoreholeCount, 'existingBoreholeCount'),
+            'permitDuration': validateField(res.permitDuration, 'permitDuration'),
+            'dateSubmitted': validateField(res.dateSubmitted, 'dateSubmitted')
         };
+        
+        console.log('=== VALIDATION RESULTS AFTER MAPPING ===');
+        Object.keys(this.fieldValidationResults).forEach(key => {
+            const result = this.fieldValidationResults[key];
+            console.log(`${key}: ${result.valid ? '✓' : '✗'} - ${result.value}`);
+        });
+        
+        console.log('=== FINAL VALIDATION SUMMARY ===');
+        console.log('Total validation results:', Object.keys(this.fieldValidationResults).length);
+        const summary = this.getValidationSummary();
+        console.log('Validation summary:', summary);
+        console.log(`Completion: ${summary.valid}/${summary.valid + summary.invalid} (${summary.percentage}%)`);
+        
+        } catch (error) {
+            console.error('=== ERROR IN INITIALIZE MOCK DATA ===');
+            console.error('Error details:', error);
+            console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
+        }
     }
 
     private generateValidationResults(): void {
